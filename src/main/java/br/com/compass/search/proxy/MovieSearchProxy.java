@@ -8,6 +8,8 @@ import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchBy
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class MovieSearchProxy {
 
@@ -18,8 +20,8 @@ public class MovieSearchProxy {
         return movieSearch.getMovieByName(searchByName);
     }
 
-    public ResponseApiSearchBy getMovieSearchByFilters(ParamsSearchByFilters searchByFilters) {
-        return movieSearch.getMovieByFilters(searchByFilters);
+    public ResponseApiSearchBy getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
+        return movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
     }
 
     public ResponseApiSearchBy getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {

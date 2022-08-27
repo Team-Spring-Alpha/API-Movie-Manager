@@ -30,7 +30,12 @@ public class ModelMapperUtils {
 
             List<GenresEnum> genresEnumList = genresIdToGenresString(responseApiResult.getGenreIds());
             List<String> actors = webClientUtils.getActorsByMovieId(responseApiResult.getId());
-            String yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
+
+            String yearRelease = "2020";
+            if (!responseApiResult.getReleaseDate().isBlank()) {
+                yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
+            }
+
             Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
             ResponseJustWatch responseJustWatch = webClientUtils.getJustWatchDataFromMovieIdAndRentPrice(responseApiResult.getId(), rentPrice);
 

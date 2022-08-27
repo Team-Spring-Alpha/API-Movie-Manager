@@ -11,14 +11,11 @@ import br.com.compass.search.proxy.MovieSearchProxy;
 import br.com.compass.search.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,26 +63,22 @@ public class SearchService {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
         searchByFilters.setWith_genres(movieGenre);
 
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters);
+        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, null, null);
         return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
     }
 
     public List<ResponseApiClient> findByDate(LocalDate dateGte, LocalDate dateLte) {
-        ResponseApiSearchBy responseApiSearchBy = webBuider.build().get().uri(uriBuilder -> uriBuilder
-                        .scheme("https").host("api.themoviedb.org")
-                        .path("/3/discover/movie")
-                        .queryParam("api_key", apiKey)
-                        .queryParam("language", "pt-BR")
-                        .queryParam("include_adult", false)
-                        .queryParam("page", 1)
-                        .queryParamIfPresent("primary_release_date.gte", Optional.ofNullable(dateGte))
-                        .queryParamIfPresent("primary_release_date.lte", Optional.ofNullable(dateLte))
-                        .build())
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError,
-                        error -> Mono.error(new RuntimeException("Verifique os parâmetros")))
-                .bodyToMono(ResponseApiSearchBy.class)
-                .block();
+        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
+        String dateAfterString = null;
+        String dateBeforeString = null;
+        if (dateGte != null) {
+            dateAfterString = dateGte.toString();
+        }
+        if (dateLte != null) {
+            dateBeforeString = dateLte.toString();
+        }
+
+        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
         return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
     }
 
@@ -94,7 +87,7 @@ public class SearchService {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
         searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
 
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters);
+        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, null, null);
         return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
     }
     public List<ResponseApiClient> findByActor(String movieActor){
