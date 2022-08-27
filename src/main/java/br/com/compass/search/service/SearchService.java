@@ -9,7 +9,6 @@ import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.proxy.MovieSearchProxy;
-import br.com.compass.search.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,6 @@ public class SearchService {
 
     private final MovieSearchProxy movieSearchProxy;
 
-    private final ModelMapperUtils modelMapperUtils;
-
     @Value("${API_KEY}")
     private String apiKey;
 
@@ -32,7 +29,7 @@ public class SearchService {
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
         ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByName(searchByName);
 
-        return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
     }
 
 //    public ResponseApiClient showMovieInfo(String movieName) {
@@ -54,12 +51,12 @@ public class SearchService {
 
         ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
 
-        return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
     }
     public List<ResponseApiClient> findByActor(String movieActor){
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
         ResponseApiSearchByActor responseApiSearchByActor = movieSearchProxy.getMovieByActorName(searchByName);
-        return modelMapperUtils.responseSearchByActorToApiClient(responseApiSearchByActor);
+        return movieSearchProxy.responseSearchByActorToApiClient(responseApiSearchByActor);
     }
 
     public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
@@ -81,6 +78,6 @@ public class SearchService {
         }
 
         ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
-        return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
     }
 }
