@@ -13,7 +13,6 @@ import br.com.compass.search.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,8 +22,6 @@ import java.util.List;
 public class SearchService {
 
     private final MovieSearchProxy movieSearchProxy;
-
-    private final WebClient.Builder webBuider;
 
     private final ModelMapperUtils modelMapperUtils;
 
