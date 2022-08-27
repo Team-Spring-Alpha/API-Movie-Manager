@@ -6,6 +6,7 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecomme
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
+import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.proxy.MovieSearchProxy;
 import br.com.compass.search.utils.ModelMapperUtils;
@@ -58,17 +59,21 @@ public class SearchService {
 
         return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
     }
-
-    public List<ResponseApiClient> findByGenre(Long movieGenre) {
-        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
-        searchByFilters.setWith_genres(movieGenre);
-
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, null, null);
-        return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
+    public List<ResponseApiClient> findByActor(String movieActor){
+        ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
+        ResponseApiSearchByActor responseApiSearchByActor = movieSearchProxy.getMovieByActorName(searchByName);
+        return modelMapperUtils.responseSearchByActorToApiClient(responseApiSearchByActor);
     }
 
-    public List<ResponseApiClient> findByDate(LocalDate dateGte, LocalDate dateLte) {
+    public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
+        if (movieGenre != null) {
+            searchByFilters.setWith_genres(movieGenre.getIdGenrer());
+        }
+        if (movieProvider != null) {
+            searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
+        }
+
         String dateAfterString = null;
         String dateBeforeString = null;
         if (dateGte != null) {
@@ -80,19 +85,5 @@ public class SearchService {
 
         ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
         return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
-    }
-
-
-    public List<ResponseApiClient> findByProvider(ProvidersEnum movieProvider) {
-        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
-        searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
-
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, null, null);
-        return modelMapperUtils.responseSearchToApiClient(responseApiSearchBy);
-    }
-    public List<ResponseApiClient> findByActor(String movieActor){
-        ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
-        ResponseApiSearchByActor responseApiSearchByActor = movieSearchProxy.getMovieByActorName(searchByName);
-        return modelMapperUtils.responseSearchByActorToApiClient(responseApiSearchByActor);
     }
 }
