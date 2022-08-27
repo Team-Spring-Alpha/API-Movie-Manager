@@ -17,7 +17,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = SearchService.class)
-@AutoConfigure
 class SearchServiceTest {
 
     @Autowired
@@ -31,7 +30,7 @@ class SearchServiceTest {
     @Test
     void findByDate() {
         ResponseApiSearchBy responseApiSearchBy = new ResponseApiSearchBy();
-
+        Mockito.when(webBuilder.build().get())
 
 
 

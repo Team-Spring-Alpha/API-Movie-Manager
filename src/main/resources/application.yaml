@@ -7,5 +7,7 @@ server:
   prefix: ""
 
 spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   config:
     import: optional:file:.env[.properties]

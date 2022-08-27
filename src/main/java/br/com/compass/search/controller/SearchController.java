@@ -27,11 +27,11 @@ public class SearchController {
         return ResponseEntity.ok(responseApiClientList);
     }
 
-    @GetMapping("/movie-info")
-    public ResponseEntity<ResponseApiClient> getMovieInfo(@RequestParam String movieName) {
-        ResponseApiClient responseApiClientList = searchService.showMovieInfo(movieName);
-        return ResponseEntity.ok(responseApiClientList);
-    }
+//    @GetMapping("/movie-info")
+//    public ResponseEntity<ResponseApiClient> getMovieInfo(@RequestParam String movieName) {
+//        ResponseApiClient responseApiClientList = searchService.showMovieInfo(movieName);
+//        return ResponseEntity.ok(responseApiClientList);
+//    }
     @GetMapping("/{id}/recommendations")
     public ResponseEntity<List<ResponseApiClient>> getRecommendations(@PathVariable Long id) {
         List<ResponseApiClient> responseApiClientList = searchService.findMoviesRecommendations(id);
