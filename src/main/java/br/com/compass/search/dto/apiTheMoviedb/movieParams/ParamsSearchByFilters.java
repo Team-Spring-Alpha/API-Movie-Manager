@@ -16,6 +16,6 @@ public class ParamsSearchByFilters extends Params{
     private Long with_watch_providers;
 
     public ParamsSearchByFilters(String apiKey) {
-        super.setApi_key(apiKey);
+        super(apiKey);
     }
 }

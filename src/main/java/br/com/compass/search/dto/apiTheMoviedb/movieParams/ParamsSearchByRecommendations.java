@@ -8,6 +8,6 @@ public class ParamsSearchByRecommendations extends Params{
     private int page = 1;
 
     public ParamsSearchByRecommendations(String apiKey) {
-        super.setApi_key(apiKey);
+        super(apiKey);
     }
 }

@@ -1,8 +1,11 @@
 package br.com.compass.search.proxy;
 
+import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
+import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,4 +27,10 @@ public interface MovieSearch {
 
     @GetMapping(value = "search/person")
     ResponseApiSearchByActor getMoviesByActors(@SpringQueryMap ParamsSearchByName searchByName);
+
+    @GetMapping(value = "/movie/{movieId}/watch/providers")
+    ResponseApiMovieProviders getMovieWatchProviders(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
+
+    @GetMapping(value = "/movie/{movieId}//credits")
+    ResponseApiMovieCredits getMovieCredits(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
 }
