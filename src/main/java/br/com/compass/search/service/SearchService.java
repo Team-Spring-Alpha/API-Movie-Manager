@@ -32,20 +32,6 @@ public class SearchService {
         return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
     }
 
-//    public ResponseApiClient showMovieInfo(String movieName) {
-//        ResponseApiSearchBy responseApiSearchBy = webBuider.build().get().uri(uriBuilder -> uriBuilder
-//                .scheme("https").host("api.themoviedb.org")
-//                .path("/3/search/movie")
-//                .queryParam("language", "pt-BR")
-//                .queryParam("api_key", apiKey)
-//                .queryParam("include_adult", false)
-//                .queryParam("page", 1)
-//                .queryParam("query", movieName).build()).retrieve().bodyToMono(ResponseApiSearchBy.class).block();
-//
-//       ResponseApiClient responseApiClient = new ResponseApiClient();
-//       return responseApiClient;
-//    }
-
     public List<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
 
