@@ -53,8 +53,9 @@ public class MovieSearchProxy {
         return buildResponseClientList(movieByRecommendations);
     }
 
-    public ResponseApiSearchByActor getMovieByActorName(ParamsSearchByName searchByName) {
-        return movieSearch.getMoviesByActors(searchByName);
+    public List<ResponseApiClient> getMovieByActorName(ParamsSearchByName searchByName) {
+        ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(searchByName);
+        return responseSearchByActorToApiClient(moviesByActors);
     }
 
     private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
@@ -161,7 +162,7 @@ public class MovieSearchProxy {
         return yearRelease;
     }
 
-    public List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
+    private List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
         List<ResponseApiClient> responseApiClientList = new ArrayList<>();
         Params params = new Params(apiKey);
 

@@ -3,7 +3,6 @@ package br.com.compass.search.service;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
-import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
@@ -35,8 +34,7 @@ public class SearchService {
     }
     public List<ResponseApiClient> findByActor(String movieActor){
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
-        ResponseApiSearchByActor responseApiSearchByActor = movieSearchProxy.getMovieByActorName(searchByName);
-        return movieSearchProxy.responseSearchByActorToApiClient(responseApiSearchByActor);
+        return movieSearchProxy.getMovieByActorName(searchByName);
     }
 
     public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
