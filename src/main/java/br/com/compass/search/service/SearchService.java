@@ -38,13 +38,7 @@ public class SearchService {
     }
 
     public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
-        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
-        if (movieGenre != null) {
-            searchByFilters.setWith_genres(movieGenre.getIdGenrer());
-        }
-        if (movieProvider != null) {
-            searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
-        }
+        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey, movieGenre.getIdGenrer(), movieProvider.getIdProvider());
 
         String dateAfterString = null;
         String dateBeforeString = null;
