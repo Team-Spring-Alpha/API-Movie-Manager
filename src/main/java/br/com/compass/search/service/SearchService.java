@@ -3,7 +3,6 @@ package br.com.compass.search.service;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
-import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
@@ -27,17 +26,12 @@ public class SearchService {
 
     public List<ResponseApiClient> findByName(String movieName) {
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByName(searchByName);
-
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieSearchByName(searchByName);
     }
 
     public List<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
-
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
-
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
     public List<ResponseApiClient> findByActor(String movieActor){
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
@@ -63,7 +57,6 @@ public class SearchService {
             dateBeforeString = dateLte.toString();
         }
 
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
     }
 }

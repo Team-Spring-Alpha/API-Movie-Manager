@@ -22,7 +22,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/movie-name")
-    public ResponseEntity<List<ResponseApiClient>> getMovieByName(@RequestParam String movieName) {
+    public ResponseEntity<List<ResponseApiClient>> getMovieByName(@RequestParam(name = "movie_name") String movieName) {
         List<ResponseApiClient> responseApiClientList = searchService.findByName(movieName);
         return ResponseEntity.ok(responseApiClientList);
     }
@@ -44,7 +44,7 @@ public class SearchController {
     }
 
     @GetMapping("/movie-actor")
-    public ResponseEntity<List<ResponseApiClient>> getMovieByActor(@RequestParam String movieActor) {
+    public ResponseEntity<List<ResponseApiClient>> getMovieByActor(@RequestParam(name = "movie_actor") String movieActor) {
         List<ResponseApiClient> responseApiClientList = searchService.findByActor(movieActor);
         return ResponseEntity.ok(responseApiClientList);
     }
