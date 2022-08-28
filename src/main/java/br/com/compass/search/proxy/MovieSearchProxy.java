@@ -125,11 +125,11 @@ public class MovieSearchProxy {
         return actorsList;
     }
 
-    private List<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchByName) {
+    private List<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
         Params params = new Params(apiKey);
         List<ResponseApiClient> responseApiClientList = new ArrayList<>();
-        for (int i = 0; i < apiSearchByName.getResults().size(); i++) {
-            ResponseApiResult responseMovie = apiSearchByName.getResults().get(i);
+        for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
+            ResponseApiResult responseMovie = apiSearchBy.getResults().get(i);
             ResponseApiClient responseApiClient = new ResponseApiClient();
 
             List<GenresEnum> genresEnumList = genresIdToGenresString(responseMovie.getGenreIds());
