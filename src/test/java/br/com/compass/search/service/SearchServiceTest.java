@@ -67,7 +67,18 @@ class SearchServiceTest {
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, dateNowMinusOneYear.toString(), dateNow.toString());
     }
+    
+    @Test
+    @DisplayName("should send a request with name actors Filter")
+    void shouldSendARequestWithNameActorsFilter() {
+        String actor = "Maryl Streep";
+        ParamsSearchByName searchByActor = new ParamsSearchByName(null, "Maryl Streep");
 
+        searchService.findByActor(actor);
+
+        Mockito.verify(movieSearchProxy).getMovieByActorName(searchByActor);
+    }
+        
     @Test
     @DisplayName("should send a request with name filter")
     void shouldSendARequestWithNameFilter() {
@@ -84,5 +95,6 @@ class SearchServiceTest {
         searchService.findByName(null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
+
     }
 }
