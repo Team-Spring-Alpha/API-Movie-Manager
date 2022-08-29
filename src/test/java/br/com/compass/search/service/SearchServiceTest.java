@@ -3,6 +3,7 @@ package br.com.compass.search.service;
 
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.proxy.MovieSearchProxy;
@@ -96,5 +97,16 @@ class SearchServiceTest {
 
         Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
 
+    }
+
+    @Test
+    @DisplayName("Should send a request with movie recommendations")
+    void shouldSendARequestWithMovieIdRecommendations() {
+        Long movieId= 1L;
+        ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(null);
+        searchService.findMoviesRecommendations(movieId);
+
+        Mockito.verify(movieSearchProxy).getMovieByRecommendation(searchByRecommendations, movieId);
+        Mockito.validateMockitoUsage();
     }
 }
