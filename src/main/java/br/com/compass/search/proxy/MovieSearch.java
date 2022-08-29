@@ -31,6 +31,6 @@ public interface MovieSearch {
     @GetMapping(value = "/movie/{movieId}/watch/providers")
     ResponseApiMovieProviders getMovieWatchProviders(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
 
-    @GetMapping(value = "/movie/{movieId}//credits")
+    @GetMapping(value = "/movie/{movieId}/credits")
     ResponseApiMovieCredits getMovieCredits(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
 }
