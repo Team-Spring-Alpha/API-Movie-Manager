@@ -2,6 +2,7 @@ package br.com.compass.search.service;
 
 
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.proxy.MovieSearchProxy;
@@ -66,7 +67,14 @@ class SearchServiceTest {
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, dateNowMinusOneYear.toString(), dateNow.toString());
     }
+    @Test
+    @DisplayName("should send a request with name actors Filter")
+    void shouldSendARequestWithNameActorsFilter() {
+        String actor = "Maryl Streep";
+        ParamsSearchByName searchByActor = new ParamsSearchByName(null, "Maryl Streep");
 
+        searchService.findByActor(actor);
 
-
+        Mockito.verify(movieSearchProxy).getMovieByActorName(searchByActor);
+    }
 }
