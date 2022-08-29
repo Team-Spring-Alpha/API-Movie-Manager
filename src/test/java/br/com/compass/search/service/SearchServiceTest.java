@@ -82,8 +82,8 @@ class SearchServiceTest {
     @Test
     @DisplayName("should send a request with name filter")
     void shouldSendARequestWithNameFilter() {
-        ParamsSearchByName searchByName = new ParamsSearchByName(null, "star");
-        searchService.findByName("star");
+        ParamsSearchByName searchByName = new ParamsSearchByName(null, "teste");
+        searchService.findByName("teste");
 
         Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
     }

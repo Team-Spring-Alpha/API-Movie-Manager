@@ -53,32 +53,11 @@ class MovieSearchProxyTest {
 
         List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieSearchByFilters(null, null, null);
 
-
-        List<String> movieActorsExpected = new ArrayList<>();
-        for (int i = 0; i < movieCredits.getCast().size(); i++) {
-            movieActorsExpected.add(movieCredits.getCast().get(i).getName());
-        }
-
-        List<GenresEnum> movieGenreEnumExpected = new ArrayList<>();
-        movieGenreEnumExpected.add(GenresEnum.ACAO);
-        movieGenreEnumExpected.add(GenresEnum.ANIMACAO);
-
-        List<ResponseRentAndBuy> buyListExpected = new ArrayList<>();
-        ResponseRentAndBuy buy = new ResponseRentAndBuy();
-        buy.setPrice(7.5);
-        buy.setStore(ProvidersEnum.NETFLIX.toString());
-        buyListExpected.add(buy);
-
-        List<ResponseRentAndBuy> rentListExpected = new ArrayList<>();
-        ResponseRentAndBuy rent = new ResponseRentAndBuy();
-        rent.setPrice(5.0);
-        rent.setStore(ProvidersEnum.NETFLIX.toString());
-        rentListExpected.add(rent);
-
-        List<ResponseFlatrate> flatrateListExpected = new ArrayList<>();
-        ResponseFlatrate responseFlatrateExpected = new ResponseFlatrate();
-        responseFlatrateExpected.setProviderName(ProvidersEnum.NETFLIX.toString());
-        flatrateListExpected.add(responseFlatrateExpected);
+        List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
+        List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
+        List<ResponseRentAndBuy> buyListExpected = getBuyListExpected(7.5);
+        List<ResponseRentAndBuy> rentListExpected = getBuyListExpected(5.0);
+        List<ResponseFlatrate> flatrateListExpected = getFlatrateListExpected();
 
         Assertions.assertNotNull(movieResponseList);
         for (int i = 0; i < movieResponseList.size(); i++) {
@@ -93,5 +72,71 @@ class MovieSearchProxyTest {
             Assertions.assertEquals(rentListExpected, movieResponseList.get(i).getJustWatch().getRent());
             Assertions.assertEquals(flatrateListExpected, movieResponseList.get(i).getJustWatch().getFlatrate());
         }
+    }
+
+    @Test
+    @DisplayName("should get correct client api response for search by name")
+    void getMovieSearchByName() {
+        ResponseApiSearchBy movieList = ResponseApiSearchByBuilder.one().now();
+        ResponseApiMovieCredits movieCredits = ResponseApiMovieCreditsBuilder.one().now();
+        ResponseApiMovieProviders movieProviders = ResponseApiMovieProvidersBuilder.one().now();
+
+        Mockito.when(movieSearch.getMovieByName(null)).thenReturn(movieList);
+        Mockito.when(movieSearch.getMovieCredits(any(), any())).thenReturn(movieCredits);
+        Mockito.when(rentPrice.getRentPriceFromYear(any())).thenReturn(5.0);
+        Mockito.when(movieSearch.getMovieWatchProviders(any(), any())).thenReturn(movieProviders);
+
+        List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieSearchByName(null);
+
+        List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
+        List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
+        List<ResponseRentAndBuy> buyListExpected = getBuyListExpected(7.5);
+        List<ResponseRentAndBuy> rentListExpected = getBuyListExpected(5.0);
+        List<ResponseFlatrate> flatrateListExpected = getFlatrateListExpected();
+
+        Assertions.assertNotNull(movieResponseList);
+        for (int i = 0; i < movieResponseList.size(); i++) {
+            Assertions.assertEquals(movieList.getResults().get(i).getTitle(), movieResponseList.get(i).getTitle());
+            Assertions.assertEquals(movieList.getResults().get(i).getId(), movieResponseList.get(i).getMovieId());
+            Assertions.assertEquals(movieList.getResults().get(i).getOverview(), movieResponseList.get(i).getOverview());
+            Assertions.assertEquals(movieList.getResults().get(i).getReleaseDate().substring(0, 4), movieResponseList.get(i).getReleaseYear());
+            Assertions.assertEquals(movieList.getResults().get(i).getPosterPath(), movieResponseList.get(i).getPoster());
+            Assertions.assertEquals(movieActorsExpected, movieResponseList.get(i).getActors());
+            Assertions.assertEquals(movieGenreEnumExpected, movieResponseList.get(i).getGenrers());
+            Assertions.assertEquals(buyListExpected, movieResponseList.get(i).getJustWatch().getBuy());
+            Assertions.assertEquals(rentListExpected, movieResponseList.get(i).getJustWatch().getRent());
+            Assertions.assertEquals(flatrateListExpected, movieResponseList.get(i).getJustWatch().getFlatrate());
+        }
+    }
+
+    private List<ResponseFlatrate> getFlatrateListExpected() {
+        List<ResponseFlatrate> flatrateListExpected = new ArrayList<>();
+        ResponseFlatrate responseFlatrateExpected = new ResponseFlatrate();
+        responseFlatrateExpected.setProviderName(ProvidersEnum.NETFLIX.toString());
+        flatrateListExpected.add(responseFlatrateExpected);
+        return flatrateListExpected;
+    }
+    private List<ResponseRentAndBuy> getBuyListExpected(double price) {
+        List<ResponseRentAndBuy> buyListExpected = new ArrayList<>();
+        ResponseRentAndBuy buy = new ResponseRentAndBuy();
+        buy.setPrice(price);
+        buy.setStore(ProvidersEnum.NETFLIX.toString());
+        buyListExpected.add(buy);
+        return buyListExpected;
+    }
+
+    private List<GenresEnum> getMovieGenreEnumExpected() {
+        List<GenresEnum> movieGenreEnumExpected = new ArrayList<>();
+        movieGenreEnumExpected.add(GenresEnum.ACAO);
+        movieGenreEnumExpected.add(GenresEnum.ANIMACAO);
+        return movieGenreEnumExpected;
+    }
+
+    private List<String> getMovieActorsExpected(ResponseApiMovieCredits movieCredits) {
+        List<String> movieActorsExpected = new ArrayList<>();
+        for (int i = 0; i < movieCredits.getCast().size(); i++) {
+            movieActorsExpected.add(movieCredits.getCast().get(i).getName());
+        }
+        return movieActorsExpected;
     }
 }
