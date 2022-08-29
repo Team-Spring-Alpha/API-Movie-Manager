@@ -3,8 +3,6 @@ package br.com.compass.search.service;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
-import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
-import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
@@ -27,36 +25,16 @@ public class SearchService {
 
     public List<ResponseApiClient> findByName(String movieName) {
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByName(searchByName);
-
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieSearchByName(searchByName);
     }
-
-//    public ResponseApiClient showMovieInfo(String movieName) {
-//        ResponseApiSearchBy responseApiSearchBy = webBuider.build().get().uri(uriBuilder -> uriBuilder
-//                .scheme("https").host("api.themoviedb.org")
-//                .path("/3/search/movie")
-//                .queryParam("language", "pt-BR")
-//                .queryParam("api_key", apiKey)
-//                .queryParam("include_adult", false)
-//                .queryParam("page", 1)
-//                .queryParam("query", movieName).build()).retrieve().bodyToMono(ResponseApiSearchBy.class).block();
-//
-//       ResponseApiClient responseApiClient = new ResponseApiClient();
-//       return responseApiClient;
-//    }
 
     public List<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
-
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
-
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
     public List<ResponseApiClient> findByActor(String movieActor){
         ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
-        ResponseApiSearchByActor responseApiSearchByActor = movieSearchProxy.getMovieByActorName(searchByName);
-        return movieSearchProxy.responseSearchByActorToApiClient(responseApiSearchByActor);
+        return movieSearchProxy.getMovieByActorName(searchByName);
     }
 
     public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
@@ -77,7 +55,6 @@ public class SearchService {
             dateBeforeString = dateLte.toString();
         }
 
-        ResponseApiSearchBy responseApiSearchBy = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
-        return movieSearchProxy.responseSearchToApiClient(responseApiSearchBy);
+        return movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
     }
 }

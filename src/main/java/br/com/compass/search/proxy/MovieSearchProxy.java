@@ -38,23 +38,27 @@ public class MovieSearchProxy {
     private String apiKey;
     private final RentPrice rentPrice;
 
-    public ResponseApiSearchBy getMovieSearchByName(ParamsSearchByName searchByName) {
-        return movieSearch.getMovieByName(searchByName);
+    public List<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
+        ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
+        return buildResponseClientList(movieByName);
     }
 
-    public ResponseApiSearchBy getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
-        return movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
+    public List<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
+        ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
+        return buildResponseClientList(movieByFilters);
     }
 
-    public ResponseApiSearchBy getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
-        return movieSearch.getMovieByRecommendations(byRecommendations, movieId);
+    public List<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
+        ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
+        return buildResponseClientList(movieByRecommendations);
     }
 
-    public ResponseApiSearchByActor getMovieByActorName(ParamsSearchByName searchByName) {
-        return movieSearch.getMoviesByActors(searchByName);
+    public List<ResponseApiClient> getMovieByActorName(ParamsSearchByName searchByName) {
+        ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(searchByName);
+        return responseSearchByActorToApiClient(moviesByActors);
     }
 
-    public ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
+    private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
 
         ResponseApiMovieProviders moviesWatchProviders = movieSearch.getMovieWatchProviders(params, movieId);
 
@@ -99,7 +103,7 @@ public class MovieSearchProxy {
         return responseJustWatch;
     }
 
-    public List<String> getMovieActors(Params params, Long movieId) {
+    private List<String> getMovieActors(Params params, Long movieId) {
         List<String> actorsList = new ArrayList<>();
         int actorListSize = 3;
 
@@ -121,32 +125,28 @@ public class MovieSearchProxy {
         return actorsList;
     }
 
-    public List<ResponseApiClient> responseSearchToApiClient(ResponseApiSearchBy apiSearchByName) {
-        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
+    private List<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
         Params params = new Params(apiKey);
-
-        for (int i = 0; i < apiSearchByName.getResults().size(); i++) {
-            ResponseApiResult responseApiResult = apiSearchByName.getResults().get(i);
+        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
+        for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
+            ResponseApiResult responseMovie = apiSearchBy.getResults().get(i);
             ResponseApiClient responseApiClient = new ResponseApiClient();
 
-            List<GenresEnum> genresEnumList = genresIdToGenresString(responseApiResult.getGenreIds());
-            List<String> actors = getMovieActors(params, responseApiResult.getId());
+            List<GenresEnum> genresEnumList = genresIdToGenresString(responseMovie.getGenreIds());
+            List<String> actors = getMovieActors(params, responseMovie.getId());
 
-            String yearRelease = "2020";
-            if (!responseApiResult.getReleaseDate().isBlank()) {
-                yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
-            }
+            String yearRelease = getYearRelease(responseMovie);
 
             Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
-            ResponseJustWatch responseJustWatch = getMovieJustWatch(responseApiResult.getId(), rentPrice, params);
+            ResponseJustWatch responseJustWatch = getMovieJustWatch(responseMovie.getId(), rentPrice, params);
 
-            responseApiClient.setMovieId(responseApiResult.getId());
-            responseApiClient.setTitle(responseApiResult.getTitle());
+            responseApiClient.setMovieId(responseMovie.getId());
+            responseApiClient.setTitle(responseMovie.getTitle());
             responseApiClient.setGenrers(genresEnumList);
             responseApiClient.setReleaseYear(yearRelease);
             responseApiClient.setActors(actors);
-            responseApiClient.setOverview(responseApiResult.getOverview());
-            responseApiClient.setPoster(responseApiResult.getPosterPath());
+            responseApiClient.setOverview(responseMovie.getOverview());
+            responseApiClient.setPoster(responseMovie.getPosterPath());
             responseApiClient.setJustWatch(responseJustWatch);
 
             responseApiClientList.add(responseApiClient);
@@ -154,16 +154,15 @@ public class MovieSearchProxy {
         return responseApiClientList;
     }
 
-    public List<GenresEnum> genresIdToGenresString(List<Long> genresIds) {
-        List<GenresEnum> genresEnumList = new ArrayList<>();
-        for (Long genresId : genresIds) {
-            GenresEnum genresEnum = GenresEnum.valueOfId(genresId);
-            genresEnumList.add(genresEnum);
+    private String getYearRelease(ResponseApiResult responseApiResult) {
+        String yearRelease = "2020";
+        if (!responseApiResult.getReleaseDate().isBlank()) {
+            yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
         }
-        return genresEnumList;
+        return yearRelease;
     }
 
-    public List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
+    private List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
         List<ResponseApiClient> responseApiClientList = new ArrayList<>();
         Params params = new Params(apiKey);
 
@@ -177,7 +176,7 @@ public class MovieSearchProxy {
                     List<GenresEnum> genresEnumList = genresIdToGenresString(responseApiResult.getGenreIds());
 
                     List<String> actors = getMovieActors(params, responseApiResult.getId());
-                    String yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
+                    String yearRelease = getYearRelease(responseApiResult);
                     Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
                     ResponseJustWatch responseJustWatch = getMovieJustWatch(responseApiResult.getId(), rentPrice, params);
 
@@ -195,5 +194,14 @@ public class MovieSearchProxy {
             }
         }
         return responseApiClientList;
+    }
+
+    private List<GenresEnum> genresIdToGenresString(List<Long> genresIds) {
+        List<GenresEnum> genresEnumList = new ArrayList<>();
+        for (Long genresId : genresIds) {
+            GenresEnum genresEnum = GenresEnum.valueOfId(genresId);
+            genresEnumList.add(genresEnum);
+        }
+        return genresEnumList;
     }
 }
