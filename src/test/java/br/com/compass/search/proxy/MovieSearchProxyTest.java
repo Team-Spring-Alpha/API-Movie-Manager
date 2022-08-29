@@ -4,6 +4,7 @@ import br.com.compass.search.builders.ResponseApiMovieCreditsBuilder;
 import br.com.compass.search.builders.ResponseApiMovieProvidersBuilder;
 import br.com.compass.search.builders.ResponseApiSearchByBuilder;
 import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
@@ -88,6 +89,42 @@ class MovieSearchProxyTest {
 
         List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieSearchByName(null);
 
+        List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
+        List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
+        List<ResponseRentAndBuy> buyListExpected = getBuyListExpected(7.5);
+        List<ResponseRentAndBuy> rentListExpected = getBuyListExpected(5.0);
+        List<ResponseFlatrate> flatrateListExpected = getFlatrateListExpected();
+
+        Assertions.assertNotNull(movieResponseList);
+        for (int i = 0; i < movieResponseList.size(); i++) {
+            Assertions.assertEquals(movieList.getResults().get(i).getTitle(), movieResponseList.get(i).getTitle());
+            Assertions.assertEquals(movieList.getResults().get(i).getId(), movieResponseList.get(i).getMovieId());
+            Assertions.assertEquals(movieList.getResults().get(i).getOverview(), movieResponseList.get(i).getOverview());
+            Assertions.assertEquals(movieList.getResults().get(i).getReleaseDate().substring(0, 4), movieResponseList.get(i).getReleaseYear());
+            Assertions.assertEquals(movieList.getResults().get(i).getPosterPath(), movieResponseList.get(i).getPoster());
+            Assertions.assertEquals(movieActorsExpected, movieResponseList.get(i).getActors());
+            Assertions.assertEquals(movieGenreEnumExpected, movieResponseList.get(i).getGenrers());
+            Assertions.assertEquals(buyListExpected, movieResponseList.get(i).getJustWatch().getBuy());
+            Assertions.assertEquals(rentListExpected, movieResponseList.get(i).getJustWatch().getRent());
+            Assertions.assertEquals(flatrateListExpected, movieResponseList.get(i).getJustWatch().getFlatrate());
+        }
+    }
+
+    @Test
+    @DisplayName("Should get correct response for search by movie recommendation")
+    void getMovieSearchByRecommendation() {
+        ResponseApiSearchBy movieList = ResponseApiSearchByBuilder.one().now();
+        ResponseApiMovieCredits movieCredits = ResponseApiMovieCreditsBuilder.one().now();
+        ResponseApiMovieProviders movieProviders = ResponseApiMovieProvidersBuilder.one().now();
+        ParamsSearchByRecommendations paramsSearchByRecommendations = new ParamsSearchByRecommendations(null);
+
+        Mockito.when(movieSearch.getMovieByName(null)).thenReturn(movieList);
+        Mockito.when(movieSearch.getMovieCredits(any(), any())).thenReturn(movieCredits);
+        Mockito.when(rentPrice.getRentPriceFromYear(any())).thenReturn(5.0);
+        Mockito.when(movieSearch.getMovieWatchProviders(any(), any())).thenReturn(movieProviders);
+        Mockito.when(movieSearch.getMovieByRecommendations(paramsSearchByRecommendations, 1L)).thenReturn(movieList);
+
+        List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieByRecommendation(paramsSearchByRecommendations, 1L);
         List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
         List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
         List<ResponseRentAndBuy> buyListExpected = getBuyListExpected(7.5);
