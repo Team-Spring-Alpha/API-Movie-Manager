@@ -166,7 +166,7 @@ public class MovieSearchProxy {
         return genresEnumList;
     }
 
-    public List<Long> searchActorsByString (List<String> actors) {
+    public List<Long> actorsStringToActorsId (List<String> actors) {
         List<Long> actorsId = new ArrayList<>();
         for (int i = 0; i < actors.size(); i++) {
             ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actors.get(i)));
