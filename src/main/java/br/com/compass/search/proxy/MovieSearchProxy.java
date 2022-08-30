@@ -53,11 +53,6 @@ public class MovieSearchProxy {
         return buildResponseClientList(movieByRecommendations);
     }
 
-    public List<ResponseApiClient> getMovieByActorName(ParamsSearchByName searchByName) {
-        ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(searchByName);
-        return responseSearchByActorToApiClient(moviesByActors);
-    }
-
     private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
 
         ResponseApiMovieProviders moviesWatchProviders = movieSearch.getMovieWatchProviders(params, movieId);
@@ -162,40 +157,6 @@ public class MovieSearchProxy {
         return yearRelease;
     }
 
-    private List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
-        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
-        Params params = new Params(apiKey);
-
-        for (int i = 0; i < apiSearchByActor.getResults().size(); i++) {
-            ResponseApiResultActor responseApiResultActor = apiSearchByActor.getResults().get(i);
-            List<ResponseApiResultActorKnownFor> results = responseApiResultActor.getResults();
-
-            for (ResponseApiResultActorKnownFor responseApiResult : results) {
-                if (responseApiResult.getMediaType().equals("movie")){
-                    ResponseApiClient responseApiClient = new ResponseApiClient();
-                    List<GenresEnum> genresEnumList = genresIdToGenresString(responseApiResult.getGenreIds());
-
-                    List<String> actors = getMovieActors(params, responseApiResult.getId());
-                    String yearRelease = getYearRelease(responseApiResult);
-                    Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
-                    ResponseJustWatch responseJustWatch = getMovieJustWatch(responseApiResult.getId(), rentPrice, params);
-
-                    responseApiClient.setMovieId(responseApiResult.getId());
-                    responseApiClient.setTitle(responseApiResult.getTitle());
-                    responseApiClient.setGenrers(genresEnumList);
-                    responseApiClient.setReleaseYear(yearRelease);
-                    responseApiClient.setActors(actors);
-                    responseApiClient.setOverview(responseApiResult.getOverview());
-                    responseApiClient.setPoster(responseApiResult.getPosterPath());
-                    responseApiClient.setJustWatch(responseJustWatch);
-
-                    responseApiClientList.add(responseApiClient);
-                }
-            }
-        }
-        return responseApiClientList;
-    }
-
     private List<GenresEnum> genresIdToGenresString(List<Long> genresIds) {
         List<GenresEnum> genresEnumList = new ArrayList<>();
         for (Long genresId : genresIds) {
@@ -203,5 +164,21 @@ public class MovieSearchProxy {
             genresEnumList.add(genresEnum);
         }
         return genresEnumList;
+    }
+
+    public List<Long> searchActorsByString (List<String> actors) {
+        List<Long> actorsId = new ArrayList<>();
+        for (int i = 0; i < actors.size(); i++) {
+            ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actors.get(i)));
+            List<ResponseApiResultActor> results = moviesByActors.getResults();
+
+            for (int j = 0; j < results.size(); j++){
+                boolean acting = results.get(j).getKnownForDepartment().equals("Acting");
+                if (acting){
+                    actorsId.add(results.get(j).getId());
+                }
+            }
+        }
+        return actorsId;
     }
 }

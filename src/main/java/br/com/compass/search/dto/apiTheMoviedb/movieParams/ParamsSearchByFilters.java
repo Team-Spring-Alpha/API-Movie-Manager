@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter(AccessLevel.NONE)
 @EqualsAndHashCode
@@ -17,6 +19,8 @@ public class ParamsSearchByFilters extends Params{
     private Long with_genres;
     @Setter(AccessLevel.PUBLIC)
     private Long with_watch_providers;
+    @Setter(AccessLevel.PUBLIC)
+    private List<Long> with_people;
 
     public ParamsSearchByFilters(String apiKey) {
         super(apiKey);
