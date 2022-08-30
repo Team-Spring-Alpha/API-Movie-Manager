@@ -54,7 +54,7 @@ public class SearchService {
         }
 
         if (moviePeoples != null){
-            List<Long> longs = movieSearchProxy.searchActorsByString(moviePeoples);
+            List<Long> longs = movieSearchProxy.actorsStringToActorsId(moviePeoples);
             searchByFilters.setWith_people(longs);
         }
 
