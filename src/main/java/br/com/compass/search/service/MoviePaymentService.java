@@ -3,7 +3,7 @@ package br.com.compass.search.service;
 import br.com.compass.search.dto.moviepayment.request.RequestMoviePayment;
 import br.com.compass.search.dto.moviepayment.response.ResponseMoviePayment;
 import br.com.compass.search.entities.MoviePaymentCollection;
-import br.com.compass.search.repository.MoviePaymentRepository;
+import br.com.compass.search.proxy.repository.MoviePaymentRepository;
 import br.com.compass.search.utils.ValidationCreditCard;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
