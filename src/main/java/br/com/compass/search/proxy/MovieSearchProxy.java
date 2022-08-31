@@ -151,7 +151,7 @@ public class MovieSearchProxy {
 
     private String getYearRelease(ResponseApiResult responseApiResult) {
         String yearRelease = "2020";
-        if (!responseApiResult.getReleaseDate().isBlank()) {
+        if (responseApiResult.getReleaseDate() != null && !responseApiResult.getReleaseDate().isBlank()) {
             yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
         }
         return yearRelease;
