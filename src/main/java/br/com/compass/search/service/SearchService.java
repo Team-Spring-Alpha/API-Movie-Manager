@@ -29,12 +29,9 @@ public class SearchService {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
         return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
-    public List<ResponseApiClient> findByActor(String movieActor){
-        ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
-        return movieSearchProxy.getMovieByActorName(searchByName);
-    }
 
-    public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider, String movieName) {
+    public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
+                                                    ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
         HashSet<ResponseApiClient> movieSearchByName = new HashSet<>();
         HashSet<ResponseApiClient> movieSearchByFilters = new HashSet<>();
 
@@ -43,13 +40,17 @@ public class SearchService {
             movieSearchByName = movieSearchProxy.getMovieSearchByName(searchByName);
         }
 
-        if (movieGenre != null || dateGte != null || dateLte != null || movieProvider != null || movieName == null) {
+        if (movieGenre != null || dateGte != null || dateLte != null || movieProvider != null || movieName == null || moviePeoples != null) {
             ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
             if (movieGenre != null) {
                 searchByFilters.setWith_genres(movieGenre.getIdGenrer());
             }
             if (movieProvider != null) {
                 searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
+            }
+            if (moviePeoples != null){
+                List<Long> longs = movieSearchProxy.actorsStringToActorsId(moviePeoples);
+                searchByFilters.setWith_people(longs);
             }
 
             String dateAfterString = null;
@@ -69,5 +70,7 @@ public class SearchService {
         }
 
         return movieSearchByFilters;
+
     }
 }
+
