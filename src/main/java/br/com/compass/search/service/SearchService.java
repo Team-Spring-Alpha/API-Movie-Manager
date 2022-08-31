@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,12 +33,9 @@ public class SearchService {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
         return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
-    public List<ResponseApiClient> findByActor(String movieActor){
-        ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieActor);
-        return movieSearchProxy.getMovieByActorName(searchByName);
-    }
 
-    public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider) {
+    public List<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
+                                                 ProvidersEnum movieProvider, List<String> moviePeoples) {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
         if (movieGenre != null) {
             searchByFilters.setWith_genres(movieGenre.getIdGenrer());
@@ -53,6 +51,11 @@ public class SearchService {
         }
         if (dateLte != null) {
             dateBeforeString = dateLte.toString();
+        }
+
+        if (moviePeoples != null){
+            List<Long> longs = movieSearchProxy.actorsStringToActorsId(moviePeoples);
+            searchByFilters.setWith_people(longs);
         }
 
         return movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);

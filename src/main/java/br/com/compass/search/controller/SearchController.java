@@ -38,14 +38,9 @@ public class SearchController {
             (@RequestParam(required = false, name = "movie_genrer") GenresEnum movieGenre,
              @RequestParam(required = false, name = "release_date_after") @Valid @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateGte,
              @RequestParam(required = false, name = "release_date_before") @Valid @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateLte,
-             @RequestParam(required = false, name = "movie_provider") ProvidersEnum movieProvider ) {
-        List<ResponseApiClient> responseApiClientList = searchService.findByFilters(movieGenre, dateGte, dateLte, movieProvider);
-        return ResponseEntity.ok(responseApiClientList);
-    }
-
-    @GetMapping("/movie-actor")
-    public ResponseEntity<List<ResponseApiClient>> getMovieByActor(@RequestParam(name = "movie_actor") String movieActor) {
-        List<ResponseApiClient> responseApiClientList = searchService.findByActor(movieActor);
+             @RequestParam(required = false, name = "movie_provider") ProvidersEnum movieProvider,
+             @RequestParam(required = false, name = "movie_peoples") List<String> moviePeoples) {
+        List<ResponseApiClient> responseApiClientList = searchService.findByFilters(movieGenre, dateGte, dateLte, movieProvider, moviePeoples);
         return ResponseEntity.ok(responseApiClientList);
     }
 }
