@@ -1,11 +1,11 @@
 package br.com.compass.search.service;
 
 
+import br.com.compass.search.client.MovieSearchProxy;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.client.MovieSearchProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest(classes = SearchService.class)
 class SearchServiceTest {
@@ -66,6 +68,27 @@ class SearchServiceTest {
         searchService.findByFilters(null, dateNowMinusOneYear, dateNow, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, dateNowMinusOneYear.toString(), dateNow.toString());
+    }
+
+    @Test
+    @DisplayName("should send a request with actor name Filter")
+    void shouldSendARequestWithActorNameFilter() {
+        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
+
+        List<String> actorList = new ArrayList<>();
+        actorList.add("test");
+        actorList.add("test 2");
+
+        List<Long> ActorlongList = new ArrayList<>();
+        ActorlongList.add(5L);
+        ActorlongList.add(8L);
+        searchByFilters.setWith_people(ActorlongList);
+
+        Mockito.when(movieSearchProxy.actorsStringToActorsId(actorList)).thenReturn(ActorlongList);
+
+        searchService.findByFilters(null, null, null, null, actorList, null);
+
+        Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null,null);
     }
 
     @Test

@@ -18,11 +18,10 @@ public class ResponseApiSearchByBuilder {
         builder.searchBy = new ResponseApiSearchBy();
 
         ResponseApiResult movieOne = ResponseApiResultBuilder.one().now();
-        ResponseApiResult movieTwo = ResponseApiResultBuilder.one().withId(2L).withTitle("movie test 2").now();
 
         List<ResponseApiResult> moviesList = new ArrayList<>();
         moviesList.add(movieOne);
-        moviesList.add(movieTwo);
+        moviesList.add(movieOne);
 
         builder.searchBy.setPage(1);
         builder.searchBy.setTotalPages(1);
