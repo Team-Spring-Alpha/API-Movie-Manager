@@ -5,7 +5,7 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.proxy.MovieSearchProxy;
+import br.com.compass.search.client.MovieSearchProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

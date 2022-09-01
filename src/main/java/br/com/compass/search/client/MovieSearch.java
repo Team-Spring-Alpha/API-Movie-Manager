@@ -1,4 +1,4 @@
-package br.com.compass.search.proxy;
+package br.com.compass.search.client;
 
 import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
