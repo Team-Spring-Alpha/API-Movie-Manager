@@ -2,6 +2,7 @@ package br.com.compass.search.controller;
 
 
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
+import br.com.compass.search.dto.apiclient.response.ResponseApiClientMovieById;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.service.SearchService;
@@ -39,5 +40,11 @@ public class SearchController {
              @RequestParam(required = false, name = "movie_name")String movieName) {
         HashSet<ResponseApiClient> responseApiClientList = searchService.findByFilters(movieGenre, dateGte, dateLte, movieProvider, moviePeoples,movieName);
         return ResponseEntity.ok(responseApiClientList);
+    }
+
+    @GetMapping("/movie/{movieId}")
+    public ResponseEntity<ResponseApiClientMovieById> getMovieById(@PathVariable Long movieId) {
+        ResponseApiClientMovieById responseMovieById = searchService.findByMovieId(movieId);
+        return ResponseEntity.ok(responseMovieById);
     }
 }

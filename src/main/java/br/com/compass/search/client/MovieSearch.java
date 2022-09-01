@@ -1,5 +1,6 @@
 package br.com.compass.search.client;
 
+import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResult;
 import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
@@ -33,4 +34,7 @@ public interface MovieSearch {
 
     @GetMapping(value = "/movie/{movieId}/credits")
     ResponseApiMovieCredits getMovieCredits(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
+
+    @GetMapping(value = "movie/{movieId}")
+    ResponseApiResult getMovieById(@SpringQueryMap Params params, @PathVariable("movieId") Long movieId);
 }
