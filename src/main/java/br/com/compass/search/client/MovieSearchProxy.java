@@ -1,4 +1,4 @@
-package br.com.compass.search.proxy;
+package br.com.compass.search.client;
 
 import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResult;
 import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultActor;
@@ -10,14 +10,13 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
-import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiResultActorKnownFor;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.dto.apiclient.response.ResponseFlatrate;
 import br.com.compass.search.dto.apiclient.response.ResponseJustWatch;
 import br.com.compass.search.dto.apiclient.response.ResponseRentAndBuy;
 import br.com.compass.search.enums.GenresEnum;
-import br.com.compass.search.utils.RentPrice;
+import br.com.compass.search.service.RentPrice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

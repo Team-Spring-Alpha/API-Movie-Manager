@@ -1,4 +1,4 @@
-package br.com.compass.search.utils;
+package br.com.compass.search.service;
 
 import org.springframework.stereotype.Component;
 

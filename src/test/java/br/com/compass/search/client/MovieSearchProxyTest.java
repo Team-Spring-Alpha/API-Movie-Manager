@@ -1,4 +1,4 @@
-package br.com.compass.search.proxy;
+package br.com.compass.search.client;
 
 import br.com.compass.search.builders.ResponseApiMovieCreditsBuilder;
 import br.com.compass.search.builders.ResponseApiMovieProvidersBuilder;
@@ -12,7 +12,7 @@ import br.com.compass.search.dto.apiclient.response.ResponseFlatrate;
 import br.com.compass.search.dto.apiclient.response.ResponseRentAndBuy;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.utils.RentPrice;
+import br.com.compass.search.service.RentPrice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

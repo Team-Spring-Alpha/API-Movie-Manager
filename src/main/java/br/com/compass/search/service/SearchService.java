@@ -6,7 +6,7 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecomme
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.proxy.MovieSearchProxy;
+import br.com.compass.search.client.MovieSearchProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
