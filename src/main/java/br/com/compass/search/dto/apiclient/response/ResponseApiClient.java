@@ -3,10 +3,12 @@ package br.com.compass.search.dto.apiclient.response;
 import br.com.compass.search.enums.GenresEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode
 public class ResponseApiClient {
     @JsonProperty("movie_id")
     private Long movieId;

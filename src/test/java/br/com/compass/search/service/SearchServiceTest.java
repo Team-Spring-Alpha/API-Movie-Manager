@@ -2,7 +2,6 @@ package br.com.compass.search.service;
 
 
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
@@ -30,7 +29,7 @@ class SearchServiceTest {
     void shouldSendARequestWithAllFiltersNull() {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
 
-        searchService.findByFilters(null, null, null, null, null);
+        searchService.findByFilters(null, null, null, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -41,7 +40,7 @@ class SearchServiceTest {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
         searchByFilters.setWith_genres(GenresEnum.ACAO.getIdGenrer());
 
-        searchService.findByFilters(GenresEnum.ACAO, null, null, null, null);
+        searchService.findByFilters(GenresEnum.ACAO, null, null, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -52,7 +51,7 @@ class SearchServiceTest {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
         searchByFilters.setWith_watch_providers(ProvidersEnum.NETFLIX.getIdProvider());
 
-        searchService.findByFilters(null, null, null, ProvidersEnum.NETFLIX, null);
+        searchService.findByFilters(null, null, null, ProvidersEnum.NETFLIX, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -64,28 +63,9 @@ class SearchServiceTest {
         LocalDate dateNowMinusOneYear = LocalDate.now().minusYears(1);
         LocalDate dateNow = LocalDate.now();
 
-        searchService.findByFilters(null, dateNowMinusOneYear, dateNow, null, null);
+        searchService.findByFilters(null, dateNowMinusOneYear, dateNow, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, dateNowMinusOneYear.toString(), dateNow.toString());
-    }
-
-    @Test
-    @DisplayName("should send a request with name filter")
-    void shouldSendARequestWithNameFilter() {
-        ParamsSearchByName searchByName = new ParamsSearchByName(null, "teste");
-        searchService.findByName("teste");
-
-        Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
-    }
-
-    @Test
-    @DisplayName("should send a request with name filter is null")
-    void shouldSendARequestWithNameFilterIsNull() {
-        ParamsSearchByName searchByName = new ParamsSearchByName(null, null);
-        searchService.findByName(null);
-
-        Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
-
     }
 
     @Test

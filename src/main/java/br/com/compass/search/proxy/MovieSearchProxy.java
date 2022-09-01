@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,17 +39,17 @@ public class MovieSearchProxy {
     private String apiKey;
     private final RentPrice rentPrice;
 
-    public List<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
+    public HashSet<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
         ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
         return buildResponseClientList(movieByName);
     }
 
-    public List<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
+    public HashSet<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
         ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
         return buildResponseClientList(movieByFilters);
     }
 
-    public List<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
+    public HashSet<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
         ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
         return buildResponseClientList(movieByRecommendations);
     }
@@ -120,9 +121,9 @@ public class MovieSearchProxy {
         return actorsList;
     }
 
-    private List<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
+    private HashSet<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
         Params params = new Params(apiKey);
-        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
+        HashSet<ResponseApiClient> responseApiClientList = new HashSet<>();
         for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
             ResponseApiResult responseMovie = apiSearchBy.getResults().get(i);
             ResponseApiClient responseApiClient = new ResponseApiClient();
