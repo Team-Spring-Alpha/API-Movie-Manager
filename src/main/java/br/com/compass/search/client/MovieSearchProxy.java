@@ -11,10 +11,7 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecomme
 import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
-import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
-import br.com.compass.search.dto.apiclient.response.ResponseFlatrate;
-import br.com.compass.search.dto.apiclient.response.ResponseJustWatch;
-import br.com.compass.search.dto.apiclient.response.ResponseRentAndBuy;
+import br.com.compass.search.dto.apiclient.response.*;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.service.RentPrice;
 import lombok.RequiredArgsConstructor;
@@ -180,5 +177,21 @@ public class MovieSearchProxy {
             }
         }
         return actorsId;
+    }
+
+    public ResponseApiClientMovieById getMovieById(Params params, Long id) {
+        ResponseApiResult movieById = movieSearch.getMovieById(params, id);
+
+        ResponseApiClientMovieById responseApiClientMovieById = new ResponseApiClientMovieById();
+        String yearRelease = getYearRelease(movieById);
+        Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
+
+        responseApiClientMovieById.setId(movieById.getId());
+        responseApiClientMovieById.setMovieName(movieById.getTitle());
+
+        ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
+        responseApiClientMovieById.setJustWatch(movieJustWatch);
+
+        return responseApiClientMovieById;
     }
 }

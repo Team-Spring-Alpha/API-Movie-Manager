@@ -1,15 +1,20 @@
 package br.com.compass.search.service;
 
+import br.com.compass.search.client.MovieSearchProxy;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
+import br.com.compass.search.dto.apiclient.response.ResponseApiClientMovieById;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.client.MovieSearchProxy;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -27,7 +32,11 @@ public class SearchService {
 
     public HashSet<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
-        return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
+        try{
+            return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
+        } catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
@@ -71,6 +80,15 @@ public class SearchService {
 
         return movieSearchByFilters;
 
+    }
+
+    public ResponseApiClientMovieById findByMovieId(Long id) {
+        Params params = new Params(apiKey);
+        try {
+            return movieSearchProxy.getMovieById(params, id);
+        } catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
 
