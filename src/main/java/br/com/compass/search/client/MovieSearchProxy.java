@@ -1,4 +1,4 @@
-package br.com.compass.search.proxy;
+package br.com.compass.search.client;
 
 import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResult;
 import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultActor;
@@ -10,20 +10,17 @@ import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
-import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiResultActorKnownFor;
 import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
-import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
-import br.com.compass.search.dto.apiclient.response.ResponseFlatrate;
-import br.com.compass.search.dto.apiclient.response.ResponseJustWatch;
-import br.com.compass.search.dto.apiclient.response.ResponseRentAndBuy;
+import br.com.compass.search.dto.apiclient.response.*;
 import br.com.compass.search.enums.GenresEnum;
-import br.com.compass.search.utils.RentPrice;
+import br.com.compass.search.service.RentPrice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,24 +35,19 @@ public class MovieSearchProxy {
     private String apiKey;
     private final RentPrice rentPrice;
 
-    public List<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
+    public HashSet<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
         ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
         return buildResponseClientList(movieByName);
     }
 
-    public List<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
+    public HashSet<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
         ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
         return buildResponseClientList(movieByFilters);
     }
 
-    public List<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
+    public HashSet<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
         ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
         return buildResponseClientList(movieByRecommendations);
-    }
-
-    public List<ResponseApiClient> getMovieByActorName(ParamsSearchByName searchByName) {
-        ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(searchByName);
-        return responseSearchByActorToApiClient(moviesByActors);
     }
 
     private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
@@ -125,9 +117,9 @@ public class MovieSearchProxy {
         return actorsList;
     }
 
-    private List<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
+    private HashSet<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
         Params params = new Params(apiKey);
-        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
+        HashSet<ResponseApiClient> responseApiClientList = new HashSet<>();
         for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
             ResponseApiResult responseMovie = apiSearchBy.getResults().get(i);
             ResponseApiClient responseApiClient = new ResponseApiClient();
@@ -156,44 +148,10 @@ public class MovieSearchProxy {
 
     private String getYearRelease(ResponseApiResult responseApiResult) {
         String yearRelease = "2020";
-        if (!responseApiResult.getReleaseDate().isBlank()) {
+        if (responseApiResult.getReleaseDate() != null && !responseApiResult.getReleaseDate().isBlank()) {
             yearRelease = responseApiResult.getReleaseDate().substring(0, 4);
         }
         return yearRelease;
-    }
-
-    private List<ResponseApiClient> responseSearchByActorToApiClient(ResponseApiSearchByActor apiSearchByActor) {
-        List<ResponseApiClient> responseApiClientList = new ArrayList<>();
-        Params params = new Params(apiKey);
-
-        for (int i = 0; i < apiSearchByActor.getResults().size(); i++) {
-            ResponseApiResultActor responseApiResultActor = apiSearchByActor.getResults().get(i);
-            List<ResponseApiResultActorKnownFor> results = responseApiResultActor.getResults();
-
-            for (ResponseApiResultActorKnownFor responseApiResult : results) {
-                if (responseApiResult.getMediaType().equals("movie")){
-                    ResponseApiClient responseApiClient = new ResponseApiClient();
-                    List<GenresEnum> genresEnumList = genresIdToGenresString(responseApiResult.getGenreIds());
-
-                    List<String> actors = getMovieActors(params, responseApiResult.getId());
-                    String yearRelease = getYearRelease(responseApiResult);
-                    Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
-                    ResponseJustWatch responseJustWatch = getMovieJustWatch(responseApiResult.getId(), rentPrice, params);
-
-                    responseApiClient.setMovieId(responseApiResult.getId());
-                    responseApiClient.setTitle(responseApiResult.getTitle());
-                    responseApiClient.setGenrers(genresEnumList);
-                    responseApiClient.setReleaseYear(yearRelease);
-                    responseApiClient.setActors(actors);
-                    responseApiClient.setOverview(responseApiResult.getOverview());
-                    responseApiClient.setPoster(responseApiResult.getPosterPath());
-                    responseApiClient.setJustWatch(responseJustWatch);
-
-                    responseApiClientList.add(responseApiClient);
-                }
-            }
-        }
-        return responseApiClientList;
     }
 
     private List<GenresEnum> genresIdToGenresString(List<Long> genresIds) {
@@ -203,5 +161,37 @@ public class MovieSearchProxy {
             genresEnumList.add(genresEnum);
         }
         return genresEnumList;
+    }
+
+    public List<Long> actorsStringToActorsId (List<String> actors) {
+        List<Long> actorsId = new ArrayList<>();
+        for (int i = 0; i < actors.size(); i++) {
+            ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actors.get(i)));
+            List<ResponseApiResultActor> results = moviesByActors.getResults();
+
+            for (int j = 0; j < results.size(); j++){
+                boolean acting = results.get(j).getKnownForDepartment().equals("Acting");
+                if (acting){
+                    actorsId.add(results.get(j).getId());
+                }
+            }
+        }
+        return actorsId;
+    }
+
+    public ResponseApiClientMovieById getMovieById(Params params, Long id) {
+        ResponseApiResult movieById = movieSearch.getMovieById(params, id);
+
+        ResponseApiClientMovieById responseApiClientMovieById = new ResponseApiClientMovieById();
+        String yearRelease = getYearRelease(movieById);
+        Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
+
+        responseApiClientMovieById.setId(movieById.getId());
+        responseApiClientMovieById.setMovieName(movieById.getTitle());
+
+        ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
+        responseApiClientMovieById.setJustWatch(movieJustWatch);
+
+        return responseApiClientMovieById;
     }
 }

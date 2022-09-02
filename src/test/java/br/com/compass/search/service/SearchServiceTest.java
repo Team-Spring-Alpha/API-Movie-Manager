@@ -1,12 +1,11 @@
 package br.com.compass.search.service;
 
 
+import br.com.compass.search.client.MovieSearchProxy;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.proxy.MovieSearchProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest(classes = SearchService.class)
 class SearchServiceTest {
@@ -30,7 +31,7 @@ class SearchServiceTest {
     void shouldSendARequestWithAllFiltersNull() {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
 
-        searchService.findByFilters(null, null, null, null);
+        searchService.findByFilters(null, null, null, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -41,7 +42,7 @@ class SearchServiceTest {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
         searchByFilters.setWith_genres(GenresEnum.ACAO.getIdGenrer());
 
-        searchService.findByFilters(GenresEnum.ACAO, null, null, null);
+        searchService.findByFilters(GenresEnum.ACAO, null, null, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -52,7 +53,7 @@ class SearchServiceTest {
         ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
         searchByFilters.setWith_watch_providers(ProvidersEnum.NETFLIX.getIdProvider());
 
-        searchService.findByFilters(null, null, null, ProvidersEnum.NETFLIX);
+        searchService.findByFilters(null, null, null, ProvidersEnum.NETFLIX, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null, null);
     }
@@ -64,39 +65,30 @@ class SearchServiceTest {
         LocalDate dateNowMinusOneYear = LocalDate.now().minusYears(1);
         LocalDate dateNow = LocalDate.now();
 
-        searchService.findByFilters(null, dateNowMinusOneYear, dateNow, null);
+        searchService.findByFilters(null, dateNowMinusOneYear, dateNow, null, null, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, dateNowMinusOneYear.toString(), dateNow.toString());
     }
-    
-    @Test
-    @DisplayName("should send a request with name actors Filter")
-    void shouldSendARequestWithNameActorsFilter() {
-        String actor = "Maryl Streep";
-        ParamsSearchByName searchByActor = new ParamsSearchByName(null, "Maryl Streep");
-
-        searchService.findByActor(actor);
-
-        Mockito.verify(movieSearchProxy).getMovieByActorName(searchByActor);
-    }
-        
-    @Test
-    @DisplayName("should send a request with name filter")
-    void shouldSendARequestWithNameFilter() {
-        ParamsSearchByName searchByName = new ParamsSearchByName(null, "teste");
-        searchService.findByName("teste");
-
-        Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
-    }
 
     @Test
-    @DisplayName("should send a request with name filter is null")
-    void shouldSendARequestWithNameFilterIsNull() {
-        ParamsSearchByName searchByName = new ParamsSearchByName(null, null);
-        searchService.findByName(null);
+    @DisplayName("should send a request with actor name Filter")
+    void shouldSendARequestWithActorNameFilter() {
+        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(null);
 
-        Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
+        List<String> actorList = new ArrayList<>();
+        actorList.add("test");
+        actorList.add("test 2");
 
+        List<Long> ActorlongList = new ArrayList<>();
+        ActorlongList.add(5L);
+        ActorlongList.add(8L);
+        searchByFilters.setWith_people(ActorlongList);
+
+        Mockito.when(movieSearchProxy.actorsStringToActorsId(actorList)).thenReturn(ActorlongList);
+
+        searchService.findByFilters(null, null, null, null, actorList, null);
+
+        Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null,null);
     }
 
     @Test

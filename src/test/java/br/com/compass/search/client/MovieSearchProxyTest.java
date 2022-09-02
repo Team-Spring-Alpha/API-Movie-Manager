@@ -1,18 +1,21 @@
-package br.com.compass.search.proxy;
+package br.com.compass.search.client;
 
 import br.com.compass.search.builders.ResponseApiMovieCreditsBuilder;
 import br.com.compass.search.builders.ResponseApiMovieProvidersBuilder;
+import br.com.compass.search.builders.ResponseApiResultActorBuilder;
 import br.com.compass.search.builders.ResponseApiSearchByBuilder;
+import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultActor;
 import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
 import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
+import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchByActor;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.dto.apiclient.response.ResponseFlatrate;
 import br.com.compass.search.dto.apiclient.response.ResponseRentAndBuy;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import br.com.compass.search.utils.RentPrice;
+import br.com.compass.search.service.RentPrice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +25,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = MovieSearchProxy.class)
@@ -52,7 +54,9 @@ class MovieSearchProxyTest {
         Mockito.when(rentPrice.getRentPriceFromYear(any())).thenReturn(5.0);
         Mockito.when(movieSearch.getMovieWatchProviders(any(), any())).thenReturn(movieProviders);
 
-        List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieSearchByFilters(null, null, null);
+        HashSet<ResponseApiClient> movieResponseHashset = movieSearchProxy.getMovieSearchByFilters(null, null, null);
+        List<ResponseApiClient> movieResponseList = new ArrayList<>(movieResponseHashset);
+
 
         List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
         List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
@@ -61,6 +65,8 @@ class MovieSearchProxyTest {
         List<ResponseFlatrate> flatrateListExpected = getFlatrateListExpected();
 
         Assertions.assertNotNull(movieResponseList);
+
+
         for (int i = 0; i < movieResponseList.size(); i++) {
             Assertions.assertEquals(movieList.getResults().get(i).getTitle(), movieResponseList.get(i).getTitle());
             Assertions.assertEquals(movieList.getResults().get(i).getId(), movieResponseList.get(i).getMovieId());
@@ -87,7 +93,9 @@ class MovieSearchProxyTest {
         Mockito.when(rentPrice.getRentPriceFromYear(any())).thenReturn(5.0);
         Mockito.when(movieSearch.getMovieWatchProviders(any(), any())).thenReturn(movieProviders);
 
-        List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieSearchByName(null);
+        HashSet<ResponseApiClient> movieResponseHashset= movieSearchProxy.getMovieSearchByName(null);
+
+        List<ResponseApiClient> movieResponseList = new ArrayList<>(movieResponseHashset);
 
         List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
         List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
@@ -124,7 +132,9 @@ class MovieSearchProxyTest {
         Mockito.when(movieSearch.getMovieWatchProviders(any(), any())).thenReturn(movieProviders);
         Mockito.when(movieSearch.getMovieByRecommendations(paramsSearchByRecommendations, 1L)).thenReturn(movieList);
 
-        List<ResponseApiClient> movieResponseList = movieSearchProxy.getMovieByRecommendation(paramsSearchByRecommendations, 1L);
+        HashSet<ResponseApiClient> movieResponseHashset = movieSearchProxy.getMovieByRecommendation(paramsSearchByRecommendations, 1L);
+        List<ResponseApiClient> movieResponseList = new ArrayList<>(movieResponseHashset);
+
         List<String> movieActorsExpected = getMovieActorsExpected(movieCredits);
         List<GenresEnum> movieGenreEnumExpected = getMovieGenreEnumExpected();
         List<ResponseRentAndBuy> buyListExpected = getBuyListExpected(7.5);
@@ -145,6 +155,54 @@ class MovieSearchProxyTest {
             Assertions.assertEquals(flatrateListExpected, movieResponseList.get(i).getJustWatch().getFlatrate());
         }
     }
+
+    @Test
+    @DisplayName("should get actors id by name when acting")
+    void shouldGetActorsIdByNameWhenActing() {
+        List<String> actorListName = new ArrayList<>();
+        actorListName.add("test");
+        actorListName.add("test 2");
+
+        ResponseApiResultActor resultActor = ResponseApiResultActorBuilder.one().withId(1L).withKnownForDepartment("Acting").now();
+        List<ResponseApiResultActor> resultActorList = new ArrayList<>();
+        resultActorList.add(resultActor);
+
+        ResponseApiSearchByActor responseApiSearchByActor = new ResponseApiSearchByActor();
+        responseApiSearchByActor.setResults(resultActorList);
+
+        Mockito.when(movieSearch.getMoviesByActors(any())).thenReturn(responseApiSearchByActor);
+
+        List<Long> actorsId = movieSearchProxy.actorsStringToActorsId(actorListName);
+
+        for (Long aLong : actorsId) {
+            Assertions.assertEquals(1L, aLong);
+        }
+    }
+
+    @Test
+    @DisplayName("shouldnt get actors id by name when not acting")
+    void shouldntGetActorsIdByNameWhenNotActing() {
+        List<String> actorListName = new ArrayList<>();
+        actorListName.add("test");
+        actorListName.add("test 2");
+
+        ResponseApiResultActor resultActor = ResponseApiResultActorBuilder.one().withId(1L).withKnownForDepartment("test").now();
+        List<ResponseApiResultActor> resultActorList = new ArrayList<>();
+        resultActorList.add(resultActor);
+
+        ResponseApiSearchByActor responseApiSearchByActor = new ResponseApiSearchByActor();
+        responseApiSearchByActor.setResults(resultActorList);
+
+        Mockito.when(movieSearch.getMoviesByActors(any())).thenReturn(responseApiSearchByActor);
+
+        List<Long> actorsId = movieSearchProxy.actorsStringToActorsId(actorListName);
+
+        boolean actorsIdEmpty = actorsId.isEmpty();
+
+        Assertions.assertTrue(actorsIdEmpty);
+    }
+
+
 
     private List<ResponseFlatrate> getFlatrateListExpected() {
         List<ResponseFlatrate> flatrateListExpected = new ArrayList<>();
