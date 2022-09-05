@@ -98,9 +98,6 @@ class SearchServiceTest {
     @Test
     void shouldSendARequestWithMovieNameFilter(){
         ParamsSearchByName searchByName = new ParamsSearchByName(null, "test title");
-        HashSet<ResponseApiClient> movieSearchByName = new HashSet<>();
-
-        Mockito.when(movieSearchProxy.getMovieSearchByName(searchByName)).thenReturn(movieSearchByName);
 
         searchService.findByFilters(null, null, null, null, null, "test title");
 
