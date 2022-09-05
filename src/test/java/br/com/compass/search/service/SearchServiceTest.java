@@ -3,7 +3,9 @@ package br.com.compass.search.service;
 
 import br.com.compass.search.client.MovieSearchProxy;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
+import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
+import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @SpringBootTest(classes = SearchService.class)
@@ -89,6 +92,19 @@ class SearchServiceTest {
         searchService.findByFilters(null, null, null, null, actorList, null);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByFilters(searchByFilters, null,null);
+    }
+
+    @DisplayName("should send a request with movie name filter")
+    @Test
+    void shouldSendARequestWithMovieNameFilter(){
+        ParamsSearchByName searchByName = new ParamsSearchByName(null, "test title");
+        HashSet<ResponseApiClient> movieSearchByName = new HashSet<>();
+
+        Mockito.when(movieSearchProxy.getMovieSearchByName(searchByName)).thenReturn(movieSearchByName);
+
+        searchService.findByFilters(null, null, null, null, null, "test title");
+
+        Mockito.verify(movieSearchProxy).getMovieSearchByName(searchByName);
     }
 
     @Test
