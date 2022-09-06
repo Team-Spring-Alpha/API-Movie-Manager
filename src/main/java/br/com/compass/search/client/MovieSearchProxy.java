@@ -14,10 +14,13 @@ import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchBy
 import br.com.compass.search.dto.apiclient.response.*;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.service.RentPrice;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,18 +39,30 @@ public class MovieSearchProxy {
     private final RentPrice rentPrice;
 
     public HashSet<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
-        ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
-        return buildResponseClientList(movieByName);
+        try {
+            ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
+            return buildResponseClientList(movieByName);
+        }catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     public HashSet<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
-        ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
-        return buildResponseClientList(movieByFilters);
+        try {
+            ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
+            return buildResponseClientList(movieByFilters);
+        }catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     public HashSet<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
-        ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
-        return buildResponseClientList(movieByRecommendations);
+        try {
+            ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
+            return buildResponseClientList(movieByRecommendations);
+        }catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
@@ -180,18 +195,22 @@ public class MovieSearchProxy {
     }
 
     public ResponseApiClientMovieById getMovieById(Params params, Long id) {
-        ResponseApiResult movieById = movieSearch.getMovieById(params, id);
+        try {
+            ResponseApiResult movieById = movieSearch.getMovieById(params, id);
 
-        ResponseApiClientMovieById responseApiClientMovieById = new ResponseApiClientMovieById();
-        String yearRelease = getYearRelease(movieById);
-        Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
+            ResponseApiClientMovieById responseApiClientMovieById = new ResponseApiClientMovieById();
+            String yearRelease = getYearRelease(movieById);
+            Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
 
-        responseApiClientMovieById.setId(movieById.getId());
-        responseApiClientMovieById.setMovieName(movieById.getTitle());
+            responseApiClientMovieById.setId(movieById.getId());
+            responseApiClientMovieById.setMovieName(movieById.getTitle());
 
-        ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
-        responseApiClientMovieById.setJustWatch(movieJustWatch);
+            ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
+            responseApiClientMovieById.setJustWatch(movieJustWatch);
 
-        return responseApiClientMovieById;
+            return responseApiClientMovieById;
+        }catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -32,11 +32,7 @@ public class SearchService {
 
     public HashSet<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
-        try{
-            return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
-        } catch (FeignException.FeignClientException.NotFound exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
 
     public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
@@ -84,11 +80,7 @@ public class SearchService {
 
     public ResponseApiClientMovieById findByMovieId(Long id) {
         Params params = new Params(apiKey);
-        try {
-            return movieSearchProxy.getMovieById(params, id);
-        } catch (FeignException.FeignClientException.NotFound exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return movieSearchProxy.getMovieById(params, id);
     }
 }
 
