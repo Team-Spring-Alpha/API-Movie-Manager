@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("/search/movies")
 @RequiredArgsConstructor
 public class SearchController {
 
@@ -42,7 +42,7 @@ public class SearchController {
         return ResponseEntity.ok(responseApiUserDTOList);
     }
 
-    @GetMapping("/movie/{movieId}")
+    @GetMapping("/{movieId}")
     public ResponseEntity<ResponseApiUserMovieByIdDTO> getMovieById(@PathVariable Long movieId) {
         ResponseApiUserMovieByIdDTO responseMovieById = searchService.findByMovieId(movieId);
         return ResponseEntity.ok(responseMovieById);
