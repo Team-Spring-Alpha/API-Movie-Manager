@@ -1,42 +1,42 @@
 package br.com.compass.search.builders;
 
-import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultActor;
+import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultActorDTO;
 
 public class ResponseApiResultActorBuilder {
 
-    private ResponseApiResultActor responseApiResultActor;
+    private ResponseApiResultActorDTO responseApiResultActorDTO;
 
     public ResponseApiResultActorBuilder() {
     }
 
     public static ResponseApiResultActorBuilder one() {
         ResponseApiResultActorBuilder builder = new ResponseApiResultActorBuilder();
-        builder.responseApiResultActor = new ResponseApiResultActor();
+        builder.responseApiResultActorDTO = new ResponseApiResultActorDTO();
 
-        builder.responseApiResultActor.setAdult(false);
-        builder.responseApiResultActor.setGender(0);
-        builder.responseApiResultActor.setId(1L);
-        builder.responseApiResultActor.setResults(null);
-        builder.responseApiResultActor.setKnownForDepartment("Acting");
-        builder.responseApiResultActor.setName("test");
-        builder.responseApiResultActor.setPopularity(5.0);
-        builder.responseApiResultActor.setProfilePath("test url");
+        builder.responseApiResultActorDTO.setAdult(false);
+        builder.responseApiResultActorDTO.setGender(0);
+        builder.responseApiResultActorDTO.setId(1L);
+        builder.responseApiResultActorDTO.setResults(null);
+        builder.responseApiResultActorDTO.setKnownForDepartment("Acting");
+        builder.responseApiResultActorDTO.setName("test");
+        builder.responseApiResultActorDTO.setPopularity(5.0);
+        builder.responseApiResultActorDTO.setProfilePath("test url");
 
         return builder;
     }
 
     public ResponseApiResultActorBuilder withId(Long id) {
-        this.responseApiResultActor.setId(id);
+        this.responseApiResultActorDTO.setId(id);
         return this;
     }
 
     public ResponseApiResultActorBuilder withKnownForDepartment(String knownForDepartment) {
-        this.responseApiResultActor.setKnownForDepartment(knownForDepartment);
+        this.responseApiResultActorDTO.setKnownForDepartment(knownForDepartment);
         return this;
     }
 
-    public ResponseApiResultActor now() {
-        return this.responseApiResultActor;
+    public ResponseApiResultActorDTO now() {
+        return this.responseApiResultActorDTO;
     }
 
 }

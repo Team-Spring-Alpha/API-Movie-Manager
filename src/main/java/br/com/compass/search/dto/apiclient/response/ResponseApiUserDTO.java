@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode
-public class ResponseApiClient {
+public class ResponseApiUserDTO {
     @JsonProperty("movie_id")
     private Long movieId;
     private String title;
@@ -20,5 +20,5 @@ public class ResponseApiClient {
     private String overview;
     private String poster;
     @JsonProperty("just_watch")
-    private ResponseJustWatch justWatch;
+    private ResponseJustWatchDTO justWatch;
 }

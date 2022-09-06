@@ -1,33 +1,33 @@
 package br.com.compass.search.builders;
 
-import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCredits;
-import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCreditsCast;
+import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCreditsDTO;
+import br.com.compass.search.dto.apiTheMoviedb.movieCredits.ResponseApiMovieCreditsCastDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseApiMovieCreditsBuilder {
 
-    private ResponseApiMovieCredits movieCredits;
+    private ResponseApiMovieCreditsDTO movieCredits;
 
     public ResponseApiMovieCreditsBuilder() {
     }
 
     public static ResponseApiMovieCreditsBuilder one() {
         ResponseApiMovieCreditsBuilder builder = new ResponseApiMovieCreditsBuilder();
-        builder.movieCredits = new ResponseApiMovieCredits();
+        builder.movieCredits = new ResponseApiMovieCreditsDTO();
 
-        ResponseApiMovieCreditsCast cast = new ResponseApiMovieCreditsCast();
+        ResponseApiMovieCreditsCastDTO cast = new ResponseApiMovieCreditsCastDTO();
         cast.setId(1L);
         cast.setName("Test Name");
         cast.setKnownForDepartment("Acting");
 
-        ResponseApiMovieCreditsCast castTwo = new ResponseApiMovieCreditsCast();
+        ResponseApiMovieCreditsCastDTO castTwo = new ResponseApiMovieCreditsCastDTO();
         castTwo.setId(2L);
         castTwo.setName("Test Name 2");
         castTwo.setKnownForDepartment("Acting");
 
-        List<ResponseApiMovieCreditsCast> castList = new ArrayList<>();
+        List<ResponseApiMovieCreditsCastDTO> castList = new ArrayList<>();
         castList.add(cast);
         castList.add(castTwo);
 
@@ -38,7 +38,7 @@ public class ResponseApiMovieCreditsBuilder {
         return builder;
     }
 
-    public ResponseApiMovieCredits now() {
+    public ResponseApiMovieCreditsDTO now() {
         return movieCredits;
     }
 

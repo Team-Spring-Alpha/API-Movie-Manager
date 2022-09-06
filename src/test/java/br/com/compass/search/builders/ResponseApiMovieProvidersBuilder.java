@@ -1,9 +1,9 @@
 package br.com.compass.search.builders;
 
-import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProviders;
-import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProvidersResults;
-import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieRentBuy;
-import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseBrProviders;
+import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProvidersDTO;
+import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieProvidersResultsDTO;
+import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseApiMovieRentBuyDTO;
+import br.com.compass.search.dto.apiTheMoviedb.movieProviders.ResponseBrProvidersDTO;
 import br.com.compass.search.enums.ProvidersEnum;
 
 import java.util.ArrayList;
@@ -11,28 +11,28 @@ import java.util.List;
 
 public class ResponseApiMovieProvidersBuilder {
 
-    private ResponseApiMovieProviders movieProviders;
+    private ResponseApiMovieProvidersDTO movieProviders;
 
     public ResponseApiMovieProvidersBuilder() {
     }
 
     public static ResponseApiMovieProvidersBuilder one() {
         ResponseApiMovieProvidersBuilder builder = new ResponseApiMovieProvidersBuilder();
-        builder.movieProviders = new ResponseApiMovieProviders();
+        builder.movieProviders = new ResponseApiMovieProvidersDTO();
 
-        ResponseApiMovieRentBuy rentMovie = new ResponseApiMovieRentBuy();
+        ResponseApiMovieRentBuyDTO rentMovie = new ResponseApiMovieRentBuyDTO();
         rentMovie.setProviderId(ProvidersEnum.NETFLIX.getIdProvider().intValue());
         rentMovie.setProviderName(ProvidersEnum.NETFLIX.toString());
 
-        List<ResponseApiMovieRentBuy> providerList = new ArrayList<>();
+        List<ResponseApiMovieRentBuyDTO> providerList = new ArrayList<>();
         providerList.add(rentMovie);
 
-        ResponseBrProviders brProviders = new ResponseBrProviders();
+        ResponseBrProvidersDTO brProviders = new ResponseBrProvidersDTO();
         brProviders.setBuy(providerList);
         brProviders.setFlatrate(providerList);
         brProviders.setRent(providerList);
 
-        ResponseApiMovieProvidersResults movieProvidersResults = new ResponseApiMovieProvidersResults();
+        ResponseApiMovieProvidersResultsDTO movieProvidersResults = new ResponseApiMovieProvidersResultsDTO();
         movieProvidersResults.setBr(brProviders);
 
         builder.movieProviders.setId(1L);
@@ -40,22 +40,22 @@ public class ResponseApiMovieProvidersBuilder {
         return builder;
     }
 
-    public ResponseApiMovieProvidersBuilder withBuyProviders(List<ResponseApiMovieRentBuy> buyProviders) {
+    public ResponseApiMovieProvidersBuilder withBuyProviders(List<ResponseApiMovieRentBuyDTO> buyProviders) {
         this.movieProviders.getResults().getBr().setBuy(buyProviders);
         return this;
     }
 
-    public ResponseApiMovieProvidersBuilder withRentProviders(List<ResponseApiMovieRentBuy> rentProviders) {
+    public ResponseApiMovieProvidersBuilder withRentProviders(List<ResponseApiMovieRentBuyDTO> rentProviders) {
         this.movieProviders.getResults().getBr().setRent(rentProviders);
         return this;
     }
 
-    public ResponseApiMovieProvidersBuilder withFlatrateProviders(List<ResponseApiMovieRentBuy> flatrate) {
+    public ResponseApiMovieProvidersBuilder withFlatrateProviders(List<ResponseApiMovieRentBuyDTO> flatrate) {
         this.movieProviders.getResults().getBr().setFlatrate(flatrate);
         return this;
     }
 
-    public ResponseApiMovieProviders now() {
+    public ResponseApiMovieProvidersDTO now() {
         return movieProviders;
     }
 

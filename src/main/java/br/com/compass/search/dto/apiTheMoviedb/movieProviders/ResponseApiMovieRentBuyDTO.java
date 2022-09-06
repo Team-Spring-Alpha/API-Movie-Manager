@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ResponseApiMovieRentBuy {
+public class ResponseApiMovieRentBuyDTO {
     @JsonProperty("display_priority")
     private Integer displayPriority;
     @JsonProperty("logo_path")

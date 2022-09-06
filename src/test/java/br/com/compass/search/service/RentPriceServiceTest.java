@@ -6,18 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = RentPrice.class)
-class RentPriceTest {
+@SpringBootTest(classes = RentPriceService.class)
+class RentPriceServiceTest {
 
     @Autowired
-    private RentPrice rentPrice;
+    private RentPriceService rentPriceService;
 
     @Test
     @DisplayName("should get rent price of 5.0 when release date is before 1990")
     void shouldGetRentPriceOf5WhenReleaseDateIsBefore1990() {
         String releaseDate = "1989";
 
-        Double rentPriceFromYear = rentPrice.getRentPriceFromYear(releaseDate);
+        Double rentPriceFromYear = rentPriceService.getRentPriceFromYear(releaseDate);
 
         Assertions.assertEquals(5.0, rentPriceFromYear);
     }
@@ -28,8 +28,8 @@ class RentPriceTest {
         String releaseDateShortestInterval = "1990";
         String releaseDateLongestInterval = "2000";
 
-        Double rentPriceFromShortestInterval = rentPrice.getRentPriceFromYear(releaseDateShortestInterval);
-        Double rentPriceFromLongestInterval = rentPrice.getRentPriceFromYear(releaseDateLongestInterval);
+        Double rentPriceFromShortestInterval = rentPriceService.getRentPriceFromYear(releaseDateShortestInterval);
+        Double rentPriceFromLongestInterval = rentPriceService.getRentPriceFromYear(releaseDateLongestInterval);
 
         Assertions.assertEquals(10.0, rentPriceFromShortestInterval);
         Assertions.assertEquals(10.0, rentPriceFromLongestInterval);
@@ -41,8 +41,8 @@ class RentPriceTest {
         String releaseDateShortestInterval = "2001";
         String releaseDateLongestInterval = "2010";
 
-        Double rentPriceFromShortestInterval = rentPrice.getRentPriceFromYear(releaseDateShortestInterval);
-        Double rentPriceFromLongestInterval = rentPrice.getRentPriceFromYear(releaseDateLongestInterval);
+        Double rentPriceFromShortestInterval = rentPriceService.getRentPriceFromYear(releaseDateShortestInterval);
+        Double rentPriceFromLongestInterval = rentPriceService.getRentPriceFromYear(releaseDateLongestInterval);
 
         Assertions.assertEquals(20.0, rentPriceFromShortestInterval);
         Assertions.assertEquals(20.0, rentPriceFromLongestInterval);
@@ -53,7 +53,7 @@ class RentPriceTest {
     void shouldGetRentPriceOf30WhenReleaseDateIsAfter2010() {
         String releaseDate = "2011";
 
-        Double rentPriceFromYear = rentPrice.getRentPriceFromYear(releaseDate);
+        Double rentPriceFromYear = rentPriceService.getRentPriceFromYear(releaseDate);
 
         Assertions.assertEquals(30.0, rentPriceFromYear);
     }
@@ -62,8 +62,8 @@ class RentPriceTest {
     @DisplayName("should get rent price of 15.0 when release date is null or parse wrong date")
     void shouldGetRentPriceOf15WhenSomethingWrongHappenWhenParseReleaseDate() {
 
-        Double rentPriceFromNullYear = rentPrice.getRentPriceFromYear(null);
-        Double rentPriceFromWrongYear = rentPrice.getRentPriceFromYear("teste");
+        Double rentPriceFromNullYear = rentPriceService.getRentPriceFromYear(null);
+        Double rentPriceFromWrongYear = rentPriceService.getRentPriceFromYear("teste");
 
         Assertions.assertEquals(15.0, rentPriceFromNullYear);
         Assertions.assertEquals(15.0, rentPriceFromWrongYear);

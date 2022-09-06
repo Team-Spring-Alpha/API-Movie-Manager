@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ResponseFlatrate {
+public class ResponseFlatrateDTO {
     @JsonProperty("provider_name")
     private String providerName;
 }

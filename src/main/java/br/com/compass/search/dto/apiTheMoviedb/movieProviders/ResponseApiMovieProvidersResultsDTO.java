@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ResponseApiMovieProvidersResults {
+public class ResponseApiMovieProvidersResultsDTO {
     @JsonProperty("BR")
-    private ResponseBrProviders br;
+    private ResponseBrProvidersDTO br;
 }

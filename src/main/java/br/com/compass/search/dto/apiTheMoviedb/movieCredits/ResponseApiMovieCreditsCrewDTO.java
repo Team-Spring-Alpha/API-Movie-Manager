@@ -1,22 +1,24 @@
-package br.com.compass.search.dto.apiTheMoviedb;
+package br.com.compass.search.dto.apiTheMoviedb.movieCredits;
 
-import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiResultActorKnownFor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class ResponseApiResultActor {
+class ResponseApiMovieCreditsCrewDTO {
     private boolean adult;
-    private int gender;
+    private Integer gender;
     private Long id;
-    @JsonProperty("known_for")
-    private List<ResponseApiResultActorKnownFor> results;
     @JsonProperty("known_for_department")
     private String knownForDepartment;
     private String name;
+    @JsonProperty("original_name")
+    private String originalName;
     private Double popularity;
     @JsonProperty("profile_path")
     private String profilePath;
+    @JsonProperty("credit_id")
+    private String creditId;
+    private String department;
+    private String job;
+
 }

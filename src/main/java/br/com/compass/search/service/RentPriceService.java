@@ -3,7 +3,7 @@ package br.com.compass.search.service;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RentPrice {
+public class RentPriceService {
 
     public Double getRentPriceFromYear(String yearRelease) {
         Double rentPrice = 0.0;

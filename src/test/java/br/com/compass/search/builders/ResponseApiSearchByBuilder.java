@@ -1,25 +1,25 @@
 package br.com.compass.search.builders;
 
-import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResult;
-import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchBy;
+import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultDTO;
+import br.com.compass.search.dto.apiTheMoviedb.searchBy.ResponseApiSearchByDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseApiSearchByBuilder {
 
-    private ResponseApiSearchBy searchBy;
+    private ResponseApiSearchByDTO searchBy;
 
     public ResponseApiSearchByBuilder() {
     }
 
     public static ResponseApiSearchByBuilder one() {
         ResponseApiSearchByBuilder builder = new ResponseApiSearchByBuilder();
-        builder.searchBy = new ResponseApiSearchBy();
+        builder.searchBy = new ResponseApiSearchByDTO();
 
-        ResponseApiResult movieOne = ResponseApiResultBuilder.one().now();
+        ResponseApiResultDTO movieOne = ResponseApiResultBuilder.one().now();
 
-        List<ResponseApiResult> moviesList = new ArrayList<>();
+        List<ResponseApiResultDTO> moviesList = new ArrayList<>();
         moviesList.add(movieOne);
         moviesList.add(movieOne);
 
@@ -30,12 +30,12 @@ public class ResponseApiSearchByBuilder {
         return builder;
     }
 
-    public ResponseApiSearchByBuilder withResults(List<ResponseApiResult> movieList) {
+    public ResponseApiSearchByBuilder withResults(List<ResponseApiResultDTO> movieList) {
         this.searchBy.setResults(movieList);
         return this;
     }
 
-    public ResponseApiSearchBy now() {
+    public ResponseApiSearchByDTO now() {
         return this.searchBy;
     }
 

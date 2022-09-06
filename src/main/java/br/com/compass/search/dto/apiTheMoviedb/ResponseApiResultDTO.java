@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ResponseApiResult {
+public class ResponseApiResultDTO {
     @JsonProperty("poster_path")
     private String posterPath;
     private boolean adult;

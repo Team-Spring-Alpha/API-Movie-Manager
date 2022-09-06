@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ResponseApiClientMovieById {
+public class ResponseApiUserMovieByIdDTO {
     private Long id;
     @JsonProperty("movie_name")
     private String movieName;
     @JsonProperty("just_watch")
-    private ResponseJustWatch justWatch;
+    private ResponseJustWatchDTO justWatch;
 }

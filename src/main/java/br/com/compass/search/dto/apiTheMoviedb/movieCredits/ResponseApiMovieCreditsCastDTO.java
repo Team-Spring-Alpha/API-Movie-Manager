@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ResponseApiMovieCreditsCast {
+public class ResponseApiMovieCreditsCastDTO {
     private boolean adult;
     private Integer gender;
     private Long id;

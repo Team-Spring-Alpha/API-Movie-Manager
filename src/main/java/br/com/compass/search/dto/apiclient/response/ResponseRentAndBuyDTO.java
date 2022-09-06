@@ -3,7 +3,7 @@ package br.com.compass.search.dto.apiclient.response;
 import lombok.Data;
 
 @Data
-public class ResponseRentAndBuy {
+public class ResponseRentAndBuyDTO {
     private String store;
     private Double price;
 }

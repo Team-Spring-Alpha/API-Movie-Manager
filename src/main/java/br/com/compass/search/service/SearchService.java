@@ -1,20 +1,17 @@
 package br.com.compass.search.service;
 
-import br.com.compass.search.client.MovieSearchProxy;
+import br.com.compass.search.user.MovieSearchProxy;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
 import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
-import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
-import br.com.compass.search.dto.apiclient.response.ResponseApiClientMovieById;
+import br.com.compass.search.dto.apiclient.response.ResponseApiUserDTO;
+import br.com.compass.search.dto.apiclient.response.ResponseApiUserMovieByIdDTO;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -30,15 +27,15 @@ public class SearchService {
     private String apiKey;
 
 
-    public HashSet<ResponseApiClient> findMoviesRecommendations(Long movieId) {
+    public HashSet<ResponseApiUserDTO> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
         return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
     }
 
-    public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
-                                                    ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
-        HashSet<ResponseApiClient> movieSearchByName = new HashSet<>();
-        HashSet<ResponseApiClient> movieSearchByFilters = new HashSet<>();
+    public HashSet<ResponseApiUserDTO> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
+                                                     ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
+        HashSet<ResponseApiUserDTO> movieSearchByName = new HashSet<>();
+        HashSet<ResponseApiUserDTO> movieSearchByFilters = new HashSet<>();
 
         if (movieName != null) {
             ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
@@ -78,7 +75,7 @@ public class SearchService {
 
     }
 
-    public ResponseApiClientMovieById findByMovieId(Long id) {
+    public ResponseApiUserMovieByIdDTO findByMovieId(Long id) {
         Params params = new Params(apiKey);
         return movieSearchProxy.getMovieById(params, id);
     }

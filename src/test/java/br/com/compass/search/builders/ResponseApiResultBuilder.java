@@ -1,6 +1,6 @@
 package br.com.compass.search.builders;
 
-import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResult;
+import br.com.compass.search.dto.apiTheMoviedb.ResponseApiResultDTO;
 import br.com.compass.search.enums.GenresEnum;
 
 import java.time.LocalDate;
@@ -9,14 +9,14 @@ import java.util.List;
 
 public class ResponseApiResultBuilder {
 
-    private ResponseApiResult result;
+    private ResponseApiResultDTO result;
 
     public ResponseApiResultBuilder() {
     }
 
     public static ResponseApiResultBuilder one() {
         ResponseApiResultBuilder builder = new ResponseApiResultBuilder();
-        builder.result = new ResponseApiResult();
+        builder.result = new ResponseApiResultDTO();
 
         List<Long> genreIdsList = new ArrayList<>();
         genreIdsList.add(GenresEnum.ACAO.getIdGenrer());
@@ -55,7 +55,7 @@ public class ResponseApiResultBuilder {
         return this;
     }
 
-    public ResponseApiResult now() {
+    public ResponseApiResultDTO now() {
         return this.result;
     }
 

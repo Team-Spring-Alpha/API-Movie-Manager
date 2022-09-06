@@ -3,7 +3,7 @@ package br.com.compass.search.dto.apiTheMoviedb.movieProviders;
 import lombok.Data;
 
 @Data
-public class ResponseApiMovieProviders {
+public class ResponseApiMovieProvidersDTO {
     private Long id;
-    private ResponseApiMovieProvidersResults results;
+    private ResponseApiMovieProvidersResultsDTO results;
 }
