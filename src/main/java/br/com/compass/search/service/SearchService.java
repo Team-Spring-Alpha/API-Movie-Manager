@@ -29,7 +29,6 @@ public class SearchService {
     @Value("${API_KEY}")
     private String apiKey;
 
-
     public HashSet<ResponseApiClient> findMoviesRecommendations(Long movieId) {
         ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
         try{
@@ -49,7 +48,17 @@ public class SearchService {
             movieSearchByName = movieSearchProxy.getMovieSearchByName(searchByName);
         }
 
-        if (movieGenre != null || dateGte != null || dateLte != null || movieProvider != null || movieName == null || moviePeoples != null) {
+        movieSearchByFilters = searchByFilters(movieGenre, dateGte, dateLte, movieProvider, moviePeoples, movieName, movieSearchByFilters);
+
+        if (!movieSearchByName.isEmpty()) {
+            movieSearchByFilters.addAll(movieSearchByName);
+        }
+
+        return movieSearchByFilters;
+    }
+
+    private HashSet<ResponseApiClient> searchByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider, List<String> moviePeoples, String movieName, HashSet<ResponseApiClient> movieSearchByFilters) {
+        if (movieName == null || movieGenre != null || dateGte != null || dateLte != null || movieProvider != null || moviePeoples != null) {
             ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
             if (movieGenre != null) {
                 searchByFilters.setWith_genres(movieGenre.getIdGenrer());
@@ -73,13 +82,7 @@ public class SearchService {
 
             movieSearchByFilters = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
         }
-
-        if (!movieSearchByName.isEmpty()) {
-            movieSearchByFilters.addAll(movieSearchByName);
-        }
-
         return movieSearchByFilters;
-
     }
 
     public ResponseApiClientMovieById findByMovieId(Long id) {
