@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("api/movie-manager")
 @RequiredArgsConstructor
 public class SearchController {
 
@@ -30,7 +30,7 @@ public class SearchController {
         return ResponseEntity.ok(responseApiClientList);
     }
 
-    @GetMapping("/movie-filters")
+    @GetMapping("/movie-search")
     public ResponseEntity<HashSet<ResponseApiClient>> getMovieByFilters
             (@RequestParam(required = false, name = "movie_genrer") GenresEnum movieGenre,
              @RequestParam(required = false, name = "release_date_after") @Valid @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateGte,
