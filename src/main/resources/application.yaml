@@ -1,11 +1,3 @@
-server:
-  port: 8081
-
-.env:
-  directory: .
-  filename: .env
-  prefix: ""
-
 spring:
-  config:
-    import: optional:file:.env[.properties]
+  profiles:
+    active: ${APP_PROFILE:dev}
