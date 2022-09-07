@@ -103,38 +103,53 @@ public class MovieSearchProxy {
         ResponseJustWatch responseJustWatch = new ResponseJustWatch();
 
         if (moviesWatchProviders.getResults().getBr().getBuy() != null) {
-            List<ResponseRentAndBuy> responseBuyList = new ArrayList<>();
-            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getBuy().size(); i++) {
-                ResponseRentAndBuy buy = new ResponseRentAndBuy();
-                buy.setStore(moviesWatchProviders.getResults().getBr().getBuy().get(i).getProviderName());
-                buy.setPrice(rentPrice * 1.5);
-                responseBuyList.add(buy);
-            }
-            responseJustWatch.setBuy(responseBuyList);
+            List<ResponseRentAndBuy> buyList = buildJustWatchBuyList(rentPrice, moviesWatchProviders);
+            responseJustWatch.setBuy(buyList);
         }
 
         if (moviesWatchProviders.getResults().getBr().getRent() != null) {
-            List<ResponseRentAndBuy> responseRentList = new ArrayList<>();
-            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getRent().size(); i++) {
-                ResponseRentAndBuy rent = new ResponseRentAndBuy();
-                rent.setStore(moviesWatchProviders.getResults().getBr().getRent().get(i).getProviderName());
-                rent.setPrice(rentPrice);
-                responseRentList.add(rent);
-            }
+            List<ResponseRentAndBuy> responseRentList = buildJustWatchRentList(rentPrice, moviesWatchProviders);
             responseJustWatch.setRent(responseRentList);
         }
 
         if (moviesWatchProviders.getResults().getBr().getFlatrate() != null) {
-            List<ResponseFlatrate> responseFlatrateList = new ArrayList<>();
-            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getFlatrate().size(); i++) {
-                ResponseFlatrate responseFlatrate = new ResponseFlatrate();
-                responseFlatrate.setProviderName(moviesWatchProviders.getResults().getBr().getFlatrate().get(i).getProviderName());
-                responseFlatrateList.add(responseFlatrate);
-            }
+            List<ResponseFlatrate> responseFlatrateList = buildJustWatchFlatrateList(moviesWatchProviders);
             responseJustWatch.setFlatrate(responseFlatrateList);
         }
 
         return responseJustWatch;
+    }
+
+    private List<ResponseFlatrate> buildJustWatchFlatrateList(ResponseApiMovieProviders moviesWatchProviders) {
+        List<ResponseFlatrate> responseFlatrateList = new ArrayList<>();
+        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getFlatrate().size(); i++) {
+            ResponseFlatrate responseFlatrate = new ResponseFlatrate();
+            responseFlatrate.setProviderName(moviesWatchProviders.getResults().getBr().getFlatrate().get(i).getProviderName());
+            responseFlatrateList.add(responseFlatrate);
+        }
+        return responseFlatrateList;
+    }
+
+    private List<ResponseRentAndBuy> buildJustWatchRentList(Double rentPrice, ResponseApiMovieProviders moviesWatchProviders) {
+        List<ResponseRentAndBuy> responseRentList = new ArrayList<>();
+        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getRent().size(); i++) {
+            ResponseRentAndBuy rent = new ResponseRentAndBuy();
+            rent.setStore(moviesWatchProviders.getResults().getBr().getRent().get(i).getProviderName());
+            rent.setPrice(rentPrice);
+            responseRentList.add(rent);
+        }
+        return responseRentList;
+    }
+
+    private List<ResponseRentAndBuy> buildJustWatchBuyList(Double rentPrice, ResponseApiMovieProviders moviesWatchProviders) {
+        List<ResponseRentAndBuy> responseBuyList = new ArrayList<>();
+        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getBuy().size(); i++) {
+            ResponseRentAndBuy buy = new ResponseRentAndBuy();
+            buy.setStore(moviesWatchProviders.getResults().getBr().getBuy().get(i).getProviderName());
+            buy.setPrice(rentPrice * 1.5);
+            responseBuyList.add(buy);
+        }
+        return responseBuyList;
     }
 
     private List<String> getMovieActors(Params params, Long movieId) {
