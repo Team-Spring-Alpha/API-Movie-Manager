@@ -1,28 +1,24 @@
 package br.com.compass.search.dto.apiTheMoviedb.movieParams;
 
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter(AccessLevel.NONE)
 @EqualsAndHashCode
-
 public class ParamsSearchByFilters extends Params{
-    private boolean include_adult = false;
-    private int page = 1;
-    private String watch_region = "BR";
-    @Setter(AccessLevel.PUBLIC)
-    private Long with_genres;
-    @Setter(AccessLevel.PUBLIC)
-    private Long with_watch_providers;
-    @Setter(AccessLevel.PUBLIC)
-    private List<Long> with_people;
+    private final boolean include_adult = false;
+    private final int page = 1;
+    private final String watch_region = "BR";
+    private final Long with_genres;
+    private final Long with_watch_providers;
+    private final List<Long> with_people;
 
-    public ParamsSearchByFilters(String apiKey) {
-        super(apiKey);
+    public ParamsSearchByFilters(String api_key, Long with_genres, Long with_watch_providers, List<Long> with_people) {
+        super(api_key);
+        this.with_genres = with_genres;
+        this.with_watch_providers = with_watch_providers;
+        this.with_people = with_people;
     }
 }

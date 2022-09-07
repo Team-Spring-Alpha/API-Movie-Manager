@@ -17,25 +17,25 @@ public class ResponseApiMovieCreditsBuilder {
         ResponseApiMovieCreditsBuilder builder = new ResponseApiMovieCreditsBuilder();
         builder.movieCredits = new ResponseApiMovieCredits();
 
-        ResponseApiMovieCreditsCast cast = new ResponseApiMovieCreditsCast();
-        cast.setId(1L);
-        cast.setName("Test Name");
-        cast.setKnownForDepartment("Acting");
-
-        ResponseApiMovieCreditsCast castTwo = new ResponseApiMovieCreditsCast();
-        castTwo.setId(2L);
-        castTwo.setName("Test Name 2");
-        castTwo.setKnownForDepartment("Acting");
-
-        List<ResponseApiMovieCreditsCast> castList = new ArrayList<>();
-        castList.add(cast);
-        castList.add(castTwo);
+        List<ResponseApiMovieCreditsCast> castList = buildCastList(4);
 
         builder.movieCredits.setId(1L);
         builder.movieCredits.setCast(castList);
         builder.movieCredits.setCrew(null);
 
         return builder;
+    }
+
+    private static List<ResponseApiMovieCreditsCast> buildCastList(int listSize) {
+        List<ResponseApiMovieCreditsCast> castList = new ArrayList<>();
+        for (int i = 0; i < listSize; i++) {
+            ResponseApiMovieCreditsCast cast = new ResponseApiMovieCreditsCast();
+            cast.setId((long) i);
+            cast.setName("Test Name " + i);
+            cast.setKnownForDepartment("Acting");
+            castList.add(cast);
+        }
+        return castList;
     }
 
     public ResponseApiMovieCredits now() {
