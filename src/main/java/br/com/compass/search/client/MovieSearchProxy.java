@@ -14,10 +14,13 @@ import br.com.compass.search.dto.apiTheMoviedb.searchByActor.ResponseApiSearchBy
 import br.com.compass.search.dto.apiclient.response.*;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.service.RentPrice;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,19 +38,58 @@ public class MovieSearchProxy {
     private String apiKey;
     private final RentPrice rentPrice;
 
-    public HashSet<ResponseApiClient> getMovieSearchByName(ParamsSearchByName searchByName) {
+    public HashSet<ResponseApiClient> getMovieSearchByName(String movieName) {
+        ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
         ResponseApiSearchBy movieByName = movieSearch.getMovieByName(searchByName);
         return buildResponseClientList(movieByName);
     }
 
-    public HashSet<ResponseApiClient> getMovieSearchByFilters(ParamsSearchByFilters searchByFilters, String releaseDateAfter, String releaseDateBefore) {
+    public HashSet<ResponseApiClient> getMovieSearchByFilters(Long genreId, Long movieProviderId, List<Long> movieActorListId, String releaseDateAfter, String releaseDateBefore) {
+        ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey, genreId, movieProviderId, movieActorListId);
+
         ResponseApiSearchBy movieByFilters = movieSearch.getMovieByFilters(searchByFilters, releaseDateAfter, releaseDateBefore);
         return buildResponseClientList(movieByFilters);
     }
 
-    public HashSet<ResponseApiClient> getMovieByRecommendation(ParamsSearchByRecommendations byRecommendations, Long movieId) {
-        ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(byRecommendations, movieId);
-        return buildResponseClientList(movieByRecommendations);
+    public HashSet<ResponseApiClient> getMovieByRecommendation(Long movieId) {
+        ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
+        try {
+            ResponseApiSearchBy movieByRecommendations = movieSearch.getMovieByRecommendations(searchByRecommendations, movieId);
+            return buildResponseClientList(movieByRecommendations);
+        } catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseApiClientMovieById getMovieById(Long id) {
+        Params params = new Params(apiKey);
+        ResponseApiResult movieById;
+        try {
+            movieById = movieSearch.getMovieById(params, id);
+        } catch (FeignException.FeignClientException.NotFound exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        String yearRelease = getYearRelease(movieById);
+        Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
+        ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
+
+        return new ResponseApiClientMovieById(movieById.getId(), movieById.getTitle(), movieJustWatch);
+    }
+
+    public List<Long> actorsStringToActorsId (List<String> actors) {
+        List<Long> actorsId = new ArrayList<>();
+        for (String actor : actors) {
+            ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actor));
+            List<ResponseApiResultActor> results = moviesByActors.getResults();
+
+            for (ResponseApiResultActor result : results) {
+                boolean acting = result.getKnownForDepartment().equals("Acting");
+                if (acting) {
+                    actorsId.add(result.getId());
+                }
+            }
+        }
+        return actorsId;
     }
 
     private ResponseJustWatch getMovieJustWatch(Long movieId, Double rentPrice, Params params) {
@@ -161,37 +203,5 @@ public class MovieSearchProxy {
             genresEnumList.add(genresEnum);
         }
         return genresEnumList;
-    }
-
-    public List<Long> actorsStringToActorsId (List<String> actors) {
-        List<Long> actorsId = new ArrayList<>();
-        for (int i = 0; i < actors.size(); i++) {
-            ResponseApiSearchByActor moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actors.get(i)));
-            List<ResponseApiResultActor> results = moviesByActors.getResults();
-
-            for (int j = 0; j < results.size(); j++){
-                boolean acting = results.get(j).getKnownForDepartment().equals("Acting");
-                if (acting){
-                    actorsId.add(results.get(j).getId());
-                }
-            }
-        }
-        return actorsId;
-    }
-
-    public ResponseApiClientMovieById getMovieById(Params params, Long id) {
-        ResponseApiResult movieById = movieSearch.getMovieById(params, id);
-
-        ResponseApiClientMovieById responseApiClientMovieById = new ResponseApiClientMovieById();
-        String yearRelease = getYearRelease(movieById);
-        Double rentPrice = this.rentPrice.getRentPriceFromYear(yearRelease);
-
-        responseApiClientMovieById.setId(movieById.getId());
-        responseApiClientMovieById.setMovieName(movieById.getTitle());
-
-        ResponseJustWatch movieJustWatch = getMovieJustWatch(movieById.getId(), rentPrice, params);
-        responseApiClientMovieById.setJustWatch(movieJustWatch);
-
-        return responseApiClientMovieById;
     }
 }

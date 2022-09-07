@@ -55,6 +55,11 @@ public class ResponseApiMovieProvidersBuilder {
         return this;
     }
 
+    public ResponseApiMovieProvidersBuilder withBr(ResponseBrProviders br) {
+        this.movieProviders.getResults().setBr(br);
+        return this;
+    }
+
     public ResponseApiMovieProviders now() {
         return movieProviders;
     }

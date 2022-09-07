@@ -1,24 +1,17 @@
 package br.com.compass.search.service;
 
 import br.com.compass.search.client.MovieSearchProxy;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.Params;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByFilters;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByName;
-import br.com.compass.search.dto.apiTheMoviedb.movieParams.ParamsSearchByRecommendations;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClient;
 import br.com.compass.search.dto.apiclient.response.ResponseApiClientMovieById;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,69 +19,69 @@ public class SearchService {
 
     private final MovieSearchProxy movieSearchProxy;
 
-    @Value("${API_KEY}")
-    private String apiKey;
-
-
     public HashSet<ResponseApiClient> findMoviesRecommendations(Long movieId) {
-        ParamsSearchByRecommendations searchByRecommendations = new ParamsSearchByRecommendations(apiKey);
-        try{
-            return movieSearchProxy.getMovieByRecommendation(searchByRecommendations, movieId);
-        } catch (FeignException.FeignClientException.NotFound exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+        return movieSearchProxy.getMovieByRecommendation(movieId);
     }
 
     public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
                                                     ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
-        HashSet<ResponseApiClient> movieSearchByName = new HashSet<>();
-        HashSet<ResponseApiClient> movieSearchByFilters = new HashSet<>();
 
-        if (movieName != null) {
-            ParamsSearchByName searchByName = new ParamsSearchByName(apiKey, movieName);
-            movieSearchByName = movieSearchProxy.getMovieSearchByName(searchByName);
-        }
+        HashSet<ResponseApiClient> movieSearchByName;
+        HashSet<ResponseApiClient> movieSearchByFilters;
 
-        if (movieGenre != null || dateGte != null || dateLte != null || movieProvider != null || movieName == null || moviePeoples != null) {
-            ParamsSearchByFilters searchByFilters = new ParamsSearchByFilters(apiKey);
-            if (movieGenre != null) {
-                searchByFilters.setWith_genres(movieGenre.getIdGenrer());
-            }
-            if (movieProvider != null) {
-                searchByFilters.setWith_watch_providers(movieProvider.getIdProvider());
-            }
-            if (moviePeoples != null){
-                List<Long> longs = movieSearchProxy.actorsStringToActorsId(moviePeoples);
-                searchByFilters.setWith_people(longs);
-            }
+        Long genreId = getGenreId(movieGenre);
+        Long movieProviderId = getMovieProviderId(movieProvider);
+        List<Long> movieActorsIdList = getMovieActorsIdList(moviePeoples);
+        String dateAfterString = getDateAfter(dateGte);
+        String dateBeforeString = getDateBefore(dateLte);
 
-            String dateAfterString = null;
-            String dateBeforeString = null;
-            if (dateGte != null) {
-                dateAfterString = dateGte.toString();
-            }
-            if (dateLte != null) {
-                dateBeforeString = dateLte.toString();
-            }
+        movieSearchByFilters = movieSearchProxy.getMovieSearchByFilters(genreId, movieProviderId, movieActorsIdList, dateAfterString, dateBeforeString);
 
-            movieSearchByFilters = movieSearchProxy.getMovieSearchByFilters(searchByFilters, dateAfterString, dateBeforeString);
-        }
-
-        if (!movieSearchByName.isEmpty()) {
+        if (Objects.nonNull(movieName)) {
+            movieSearchByName = movieSearchProxy.getMovieSearchByName(movieName);
             movieSearchByFilters.addAll(movieSearchByName);
         }
 
         return movieSearchByFilters;
-
     }
 
     public ResponseApiClientMovieById findByMovieId(Long id) {
-        Params params = new Params(apiKey);
-        try {
-            return movieSearchProxy.getMovieById(params, id);
-        } catch (FeignException.FeignClientException.NotFound exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return movieSearchProxy.getMovieById(id);
+    }
+
+    private Long getGenreId(GenresEnum movieGenre) {
+        if (Objects.nonNull(movieGenre)) {
+            return movieGenre.getIdGenrer();
         }
+        return null;
+    }
+
+    private Long getMovieProviderId(ProvidersEnum movieProvider) {
+        if (Objects.nonNull(movieProvider)) {
+            return movieProvider.getIdProvider();
+        }
+        return null;
+    }
+
+    private List<Long> getMovieActorsIdList(List<String> moviePeoples) {
+        if (Objects.nonNull(moviePeoples)){
+            return movieSearchProxy.actorsStringToActorsId(moviePeoples);
+        }
+        return null;
+    }
+
+    private String getDateAfter(LocalDate dateGte) {
+        if (Objects.nonNull(dateGte)) {
+            return dateGte.toString();
+        }
+        return null;
+    }
+
+    private String getDateBefore(LocalDate dateLte) {
+        if (Objects.nonNull(dateLte)) {
+            return dateLte.toString();
+        }
+        return null;
     }
 }
 
