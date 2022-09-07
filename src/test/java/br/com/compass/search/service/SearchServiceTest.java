@@ -90,6 +90,17 @@ class SearchServiceTest {
         Mockito.verify(movieSearchProxy, Mockito.never()).getMovieSearchByName(any());
     }
 
+    @DisplayName("should send a request with movie name filter and another filter")
+    @Test
+    void shouldSendARequestWithMovieNameFilterAndAnotherFilter(){
+        String movieName = "test title";
+        searchService.findByFilters(null, null, null, null, null, movieName);
+
+        Mockito.verify(movieSearchProxy).getMovieSearchByName(movieName);
+
+        Mockito.verify(movieSearchProxy, Mockito.never()).getMovieSearchByFilters(null, null, null, null, null);
+    }
+
     @DisplayName("should send a request with movie name filter")
     @Test
     void shouldSendARequestWithMovieNameFilter(){
@@ -97,6 +108,7 @@ class SearchServiceTest {
         searchService.findByFilters(null, null, null, null, null, movieName);
 
         Mockito.verify(movieSearchProxy).getMovieSearchByName(movieName);
+        Mockito.verify(movieSearchProxy, Mockito.never()).getMovieSearchByFilters(null, ProvidersEnum.NETFLIX.getIdProvider(), null, null, null);
     }
 
     @Test

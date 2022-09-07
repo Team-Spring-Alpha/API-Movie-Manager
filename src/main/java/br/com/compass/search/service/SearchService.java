@@ -26,8 +26,11 @@ public class SearchService {
     public HashSet<ResponseApiClient> findByFilters(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte,
                                                     ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
 
-        HashSet<ResponseApiClient> movieSearchByName;
-        HashSet<ResponseApiClient> movieSearchByFilters;
+        boolean isMovieNameTheOnlyParam = verifyParams(movieGenre, dateGte, dateLte, movieProvider, moviePeoples, movieName);
+
+        if (isMovieNameTheOnlyParam) {
+            return movieSearchProxy.getMovieSearchByName(movieName);
+        }
 
         Long genreId = getGenreId(movieGenre);
         Long movieProviderId = getMovieProviderId(movieProvider);
@@ -35,10 +38,10 @@ public class SearchService {
         String dateAfterString = getDateAfter(dateGte);
         String dateBeforeString = getDateBefore(dateLte);
 
-        movieSearchByFilters = movieSearchProxy.getMovieSearchByFilters(genreId, movieProviderId, movieActorsIdList, dateAfterString, dateBeforeString);
+        HashSet<ResponseApiClient> movieSearchByFilters = movieSearchProxy.getMovieSearchByFilters(genreId, movieProviderId, movieActorsIdList, dateAfterString, dateBeforeString);
 
         if (Objects.nonNull(movieName)) {
-            movieSearchByName = movieSearchProxy.getMovieSearchByName(movieName);
+            HashSet<ResponseApiClient> movieSearchByName = movieSearchProxy.getMovieSearchByName(movieName);
             movieSearchByFilters.addAll(movieSearchByName);
         }
 
@@ -47,6 +50,12 @@ public class SearchService {
 
     public ResponseApiClientMovieById findByMovieId(Long id) {
         return movieSearchProxy.getMovieById(id);
+    }
+
+    private boolean verifyParams(GenresEnum movieGenre, LocalDate dateGte, LocalDate dateLte, ProvidersEnum movieProvider, List<String> moviePeoples, String movieName) {
+        return Objects.nonNull(movieName) && Objects.isNull(movieGenre)
+                && Objects.isNull(dateGte) && Objects.isNull(dateLte)
+                && Objects.isNull(movieProvider) && Objects.isNull(moviePeoples);
     }
 
     private Long getGenreId(GenresEnum movieGenre) {
