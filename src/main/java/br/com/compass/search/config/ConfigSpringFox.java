@@ -23,6 +23,7 @@ public class ConfigSpringFox {
                     .apis(RequestHandlerSelectors.basePackage("br.com.compass.search.controller"))
                     .paths(PathSelectors.regex("/api/movie-manager.*"))
                     .build()
+                .useDefaultResponseMessages(false)
                 .apiInfo(metaData());
     }
 
