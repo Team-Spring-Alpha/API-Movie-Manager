@@ -6,6 +6,9 @@ import br.com.compass.search.dto.apiclient.response.ResponseApiClientMovieById;
 import br.com.compass.search.enums.GenresEnum;
 import br.com.compass.search.enums.ProvidersEnum;
 import br.com.compass.search.service.SearchService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +26,21 @@ public class SearchController {
 
     private final SearchService searchService;
 
-
+    @ApiOperation(value = "return a movie list based on a movie id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     @GetMapping("/{id}/recommendations")
     public ResponseEntity<HashSet<ResponseApiClient>> getRecommendations(@PathVariable Long id) {
         HashSet<ResponseApiClient> responseApiClientList = searchService.findMoviesRecommendations(id);
         return ResponseEntity.ok(responseApiClientList);
     }
 
+    @ApiOperation(value = "return a movie list")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK")
+    })
     @GetMapping("/movie-search")
     public ResponseEntity<HashSet<ResponseApiClient>> getMovieByFilters
             (@RequestParam(required = false, name = "movie_genrer") GenresEnum movieGenre,
@@ -42,6 +53,11 @@ public class SearchController {
         return ResponseEntity.ok(responseApiClientList);
     }
 
+    @ApiOperation(value = "return a movie info")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
     @GetMapping("/movie/{movieId}")
     public ResponseEntity<ResponseApiClientMovieById> getMovieById(@PathVariable Long movieId) {
         ResponseApiClientMovieById responseMovieById = searchService.findByMovieId(movieId);
