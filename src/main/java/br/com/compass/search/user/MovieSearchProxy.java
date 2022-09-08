@@ -85,12 +85,6 @@ public class MovieSearchProxy {
                 responseBuyList.add(buy);
                 i++;
             }
-//            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getBuy().size(); i++) {
-//                ResponseRentAndBuyDTO buy = new ResponseRentAndBuyDTO();
-//                buy.setStore(moviesWatchProviders.getResults().getBr().getBuy().get(i).getProviderName());
-//                buy.setPrice(rentPrice * 1.5);
-//                responseBuyList.add(buy);
-//            }
             responseJustWatchDTO.setBuy(responseBuyList);
         }
 
@@ -104,13 +98,6 @@ public class MovieSearchProxy {
                 responseRentList.add(rent);
                 i++;
             }
-
-//            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getRent().size(); i++) {
-//                ResponseRentAndBuyDTO rent = new ResponseRentAndBuyDTO();
-//                rent.setStore(moviesWatchProviders.getResults().getBr().getRent().get(i).getProviderName());
-//                rent.setPrice(rentPrice);
-//                responseRentList.add(rent);
-//            }
             responseJustWatchDTO.setRent(responseRentList);
         }
 
@@ -123,12 +110,6 @@ public class MovieSearchProxy {
                 responseFlatrateDTOList.add(response);
                 i++;
             }
-
-//            for (int i = 0; i < moviesWatchProviders.getResults().getBr().getFlatrate().size(); i++) {
-//                ResponseFlatrateDTO responseFlatrateDTO = new ResponseFlatrateDTO();
-//                responseFlatrateDTO.setProviderName(moviesWatchProviders.getResults().getBr().getFlatrate().get(i).getProviderName());
-//                responseFlatrateDTOList.add(responseFlatrateDTO);
-//            }
             responseJustWatchDTO.setFlatrate(responseFlatrateDTOList);
         }
 
@@ -151,19 +132,6 @@ public class MovieSearchProxy {
                 break;
             }
         }
-
-//        for (int i = 0; i < Objects.requireNonNull(movieCredits).getCast().size(); i++) {
-//            ResponseApiMovieCreditsCastDTO cast = movieCredits.getCast().get(i);
-//
-//            if (cast.getKnownForDepartment().equals("Acting")) {
-//                actorsList.add(cast.getName());
-//                actorListSize--;
-//            }
-//
-//            if (actorListSize == 0) {
-//                break;
-//            }
-//        }
         return actorsList;
     }
 
@@ -195,29 +163,6 @@ public class MovieSearchProxy {
             responseApiUserDTOList.add(response);
             i++;
         }
-//        for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
-//            ResponseApiResultDTO responseMovie = apiSearchBy.getResults().get(i);
-//            ResponseApiUserDTO responseApiUserDTO = new ResponseApiUserDTO();
-//
-//            List<GenresEnum> genresEnumList = genresIdToGenresString(responseMovie.getGenreIds());
-//            List<String> actors = getMovieActors(params, responseMovie.getId());
-//
-//            String yearRelease = getYearRelease(responseMovie);
-//
-//            Double rentPrice = this.rentPriceService.getRentPriceFromYear(yearRelease);
-//            ResponseJustWatchDTO responseJustWatchDTO = getMovieJustWatch(responseMovie.getId(), rentPrice, params);
-//
-//            responseApiUserDTO.setMovieId(responseMovie.getId());
-//            responseApiUserDTO.setTitle(responseMovie.getTitle());
-//            responseApiUserDTO.setGenrers(genresEnumList);
-//            responseApiUserDTO.setReleaseYear(yearRelease);
-//            responseApiUserDTO.setActors(actors);
-//            responseApiUserDTO.setOverview(responseMovie.getOverview());
-//            responseApiUserDTO.setPoster(responseMovie.getPosterPath());
-//            responseApiUserDTO.setJustWatch(responseJustWatchDTO);
-//
-//            responseApiUserDTOList.add(responseApiUserDTO);
-//        }
         return responseApiUserDTOList;
     }
 
@@ -251,17 +196,6 @@ public class MovieSearchProxy {
                 }
             }
         }
-//        for (int i = 0; i < actors.size(); i++) {
-//            ResponseApiSearchByActorDTO moviesByActors = movieSearch.getMoviesByActors(new ParamsSearchByName(apiKey, actors.get(i)));
-//            List<ResponseApiResultActorDTO> results = moviesByActors.getResults();
-//
-//            for (int j = 0; j < results.size(); j++){
-//                boolean acting = results.get(j).getKnownForDepartment().equals("Acting");
-//                if (acting){
-//                    actorsId.add(results.get(j).getId());
-//                }
-//            }
-//        }
         return actorsId;
     }
 
