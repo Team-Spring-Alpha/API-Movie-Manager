@@ -122,32 +122,37 @@ public class MovieSearchProxy {
 
     private List<ResponseFlatrate> buildJustWatchFlatrateList(ResponseApiMovieProviders moviesWatchProviders) {
         List<ResponseFlatrate> responseFlatrateList = new ArrayList<>();
-        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getFlatrate().size(); i++) {
-            ResponseFlatrate responseFlatrate = new ResponseFlatrate();
+
+        for (ResponseFlatrate responseFlatrate : responseFlatrateList) {
+            int i= 0;
             responseFlatrate.setProviderName(moviesWatchProviders.getResults().getBr().getFlatrate().get(i).getProviderName());
             responseFlatrateList.add(responseFlatrate);
+            i++;
         }
         return responseFlatrateList;
     }
 
     private List<ResponseRentAndBuy> buildJustWatchRentList(Double rentPrice, ResponseApiMovieProviders moviesWatchProviders) {
         List<ResponseRentAndBuy> responseRentList = new ArrayList<>();
-        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getRent().size(); i++) {
-            ResponseRentAndBuy rent = new ResponseRentAndBuy();
+
+        for (ResponseRentAndBuy rent : responseRentList) {
+            int i = 0;
             rent.setStore(moviesWatchProviders.getResults().getBr().getRent().get(i).getProviderName());
             rent.setPrice(rentPrice);
             responseRentList.add(rent);
+            i++;
         }
         return responseRentList;
     }
 
     private List<ResponseRentAndBuy> buildJustWatchBuyList(Double rentPrice, ResponseApiMovieProviders moviesWatchProviders) {
         List<ResponseRentAndBuy> responseBuyList = new ArrayList<>();
-        for (int i = 0; i < moviesWatchProviders.getResults().getBr().getBuy().size(); i++) {
-            ResponseRentAndBuy buy = new ResponseRentAndBuy();
-            buy.setStore(moviesWatchProviders.getResults().getBr().getBuy().get(i).getProviderName());
-            buy.setPrice(rentPrice * 1.5);
+        for (ResponseRentAndBuy buy : responseBuyList) {
+            int i = 0;
+            buy.setStore(moviesWatchProviders.getResults().getBr().getRent().get(i).getProviderName());
+            buy.setPrice(rentPrice);
             responseBuyList.add(buy);
+            i++;
         }
         return responseBuyList;
     }
@@ -158,10 +163,7 @@ public class MovieSearchProxy {
 
         ResponseApiMovieCredits movieCredits = movieSearch.getMovieCredits(params, movieId);
 
-
-        for (int i = 0; i < Objects.requireNonNull(movieCredits).getCast().size(); i++) {
-            ResponseApiMovieCreditsCast cast = movieCredits.getCast().get(i);
-
+        for (ResponseApiMovieCreditsCast cast : movieCredits.getCast()) {
             if (cast.getKnownForDepartment().equals("Acting")) {
                 actorsList.add(cast.getName());
                 actorListSize--;
@@ -177,9 +179,8 @@ public class MovieSearchProxy {
     private HashSet<ResponseApiClient> buildResponseClientList(ResponseApiSearchBy apiSearchBy) {
         Params params = new Params(apiKey);
         HashSet<ResponseApiClient> responseApiClientList = new HashSet<>();
-        for (int i = 0; i < apiSearchBy.getResults().size(); i++) {
-            ResponseApiResult responseMovie = apiSearchBy.getResults().get(i);
-            ResponseApiClient responseApiClient = new ResponseApiClient();
+        for (ResponseApiClient responseApiClient : responseApiClientList) {
+            ResponseApiResult responseMovie = (ResponseApiResult) apiSearchBy.getResults();
 
             List<GenresEnum> genresEnumList = genresIdToGenresString(responseMovie.getGenreIds());
             List<String> actors = getMovieActors(params, responseMovie.getId());
