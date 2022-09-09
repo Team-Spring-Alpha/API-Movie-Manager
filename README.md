@@ -9,6 +9,8 @@
 
 `Movie-Manager`tem conexão com a API externa [The Movie DB](https://www.themoviedb.org/documentation/api) que disponibiliza acesso a dados de filmes, atores e programas de TV.
 
+// Descrever melhor a aplicação //
+
 ## Funcionalidades
 
 | Método | Caminho | Descrição |
