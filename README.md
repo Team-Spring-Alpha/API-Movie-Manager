@@ -7,9 +7,7 @@
 
 ## Fluxo de Funcionamento da Aplicação
 
-`Movie-Manager`tem conexão com a API externa [The Movie DB](https://www.themoviedb.org/documentation/api) que disponibiliza acesso a dados de filmes, atores e programas de TV.
-
-// Descrever melhor a aplicação //
+O `Movie-Manager` é um dos microserviços que faz parte da composição do projeto sendo responsável pelo gerenciamento dos filmes, é ele quem detém conexão com a API externa [The Movie DB](https://www.themoviedb.org/documentation/api) que ofere acesso a inúmeros dados sobre atores, filmes e programas de TV. 
 
 ## Funcionalidades
 
